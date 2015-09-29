@@ -14,23 +14,13 @@
     </head>
 
     <body>
-        <div class="jumbotron" style="text-align: center">
-            <h1>Entrofy</h1>
-            <p>Maximum entropy conference participation</p>
+        <div class="page-header" style="text-align: center">
+            <h1>Entrofy
+            <small>Maximum entropy conference participation</small>
+            </h1>
         </div>
         <div class="container">
-            <form action="/p" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="csv">CSV file</label>
-                    <input type="file" id="csv" name="csv">
-                    <p class="help-block">Your CSV file should have participants in rows, and attributes in columns.
-                    
-                    The participant name (or identifier) should be the first column.
-                    
-                    There should be a header row indicating the name for each attribute.</p>
-                </div>
-                <input type="submit" class="btn btn-default" value="Upload">
-            </form>
+            <!-- EVERYTHING GOES HERE -->
         </div>
 
     </body>
@@ -42,5 +32,8 @@
             integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
             crossorigin="anonymous"></script>
 
-    <script src="/static/js/index.js"></script>
+    <script src="/static/js/process.js"></script>
+    <script>
+        var table = {{ table |safe }};
+    </script>
 </html>

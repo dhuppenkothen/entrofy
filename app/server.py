@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import argparse
-from flask import Flask, request, redirect, url_for, render_template
+from flask import Flask, request, redirect, url_for, render_template, Response
 from werkzeug import secure_filename
 import ConfigParser
 import os
 import re
 import sys
 import ujson as json
+import entrofy
 
 DEBUG = True
 
@@ -35,10 +38,18 @@ def run(**kwargs):
 
 
 
-@app.route('/p')
+@app.route('/p', methods=['POST'])
 def process():
-    if request.method == 'POST':
-        filename = request.files['csvfile']
+
+    print(request)
+    print(request.files)
+
+    fdesc = request.files['csv']
+
+    response = entrofy.process_csv(fdesc)
+
+    return render_template('process.html', table=response)
+    return Response(response, mimetype='application/json')
 
 
 @app.route('/')
