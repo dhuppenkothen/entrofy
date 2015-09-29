@@ -123,4 +123,4 @@ def process_csv(fdesc):
 
     df = pd.read_csv(fdesc)
 
-    return df.to_json(orient='records')
+    return df.to_json()

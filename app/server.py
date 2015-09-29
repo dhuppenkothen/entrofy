@@ -48,6 +48,7 @@ def process():
 
     response = entrofy.process_csv(fdesc)
 
+    return render_template('process.html')
     return Response(response, mimetype='application/json')
 
 
