@@ -117,3 +117,10 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, n_samples=15):
             best = solution
 
     return max_score, best
+
+
+def process_csv(fdesc):
+
+    df = pd.read_csv(fdesc)
+
+    return df.to_json(orient='records')
