@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-import flask
+from flask import Flask, request, redirect, url_for, render_template
+from werkzeug import secure_filename
 import ConfigParser
 import os
 import re
@@ -11,7 +12,7 @@ import ujson as json
 DEBUG = True
 
 # construct application object
-app = flask.Flask(__name__)
+app = Flask(__name__)
 app.config.from_object(__name__)
 
 def load_config(server_ini):
@@ -33,10 +34,17 @@ def run(**kwargs):
     app.run(**kwargs)
 
 
+
+@app.route('/p')
+def process():
+    if request.method == 'POST':
+        filename = request.files['csvfile']
+
+
 @app.route('/')
 def index():
     '''Top-level web page'''
-    return flask.render_template('index.html')
+    return render_template('index.html')
 
 
 # Main block
