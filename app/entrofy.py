@@ -119,8 +119,35 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, n_samples=15):
     return max_score, best
 
 
+def binarize(df, n_bins=5):
+
+    df2 = pd.DataFrame(index=df.index)
+
+    for column in df:
+        # If it's a float, chop up into bins
+        if np.issubdtype(df[column].dtype, float):
+            data = pd.cut(df[column], n_bins)
+        else:
+            data = df[column]
+
+        # If it's categorical or object, do this
+        unique_values = data.unique()
+        for value in unique_values:
+            if value is np.nan:
+                continue
+
+            new_series = pd.DataFrame(data=(data == value), dtype=float)
+            if not np.any(new_series):
+                continue
+
+            new_name = '{}__{}'.format(column, value)
+            df2[new_name] = new_series
+            df2[new_name][pd.isnull(data)] = np.nan
+
+    return df2
+
+
 def process_csv(fdesc):
 
-    df = pd.read_csv(fdesc)
-
-    return df.to_json()
+    df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
+    return binarize(df).to_json()
