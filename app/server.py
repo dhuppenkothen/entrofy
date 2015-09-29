@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import argparse
 from flask import Flask, request, redirect, url_for, render_template
 from werkzeug import secure_filename
@@ -35,8 +37,10 @@ def run(**kwargs):
 
 
 
-@app.route('/p')
+@app.route('/p', methods=['POST'])
 def process():
+    print(request)
+    print(request.files)
     if request.method == 'POST':
         filename = request.files['csvfile']
 

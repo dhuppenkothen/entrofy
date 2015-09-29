@@ -1,0 +1,6 @@
+argparse
+numpy
+pandas
+flask
+ujson
+ConfigParser
