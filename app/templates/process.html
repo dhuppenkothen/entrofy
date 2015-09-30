@@ -19,6 +19,21 @@
             <small>Maximum entropy conference participation</small>
             </h1>
         </div>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" id="slider_button" name="slider_button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+        Sliders</a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body" id="sliders" name="sliders">
+      </div>
+    </div>
+  </div>
+        </div>
         <div class="container col-md-2">
             <!-- EVERYTHING GOES HERE -->
             <div class="form-group">
@@ -103,6 +118,17 @@ src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bo
                 success: update_results,
                 dataType: 'json'});
         });
+        $("#slider_button").click(function() {
+//            window.alert("Hello")
+            var data = $('#data_table').bootstrapTable('getData');
+            
+
+
+
+       });
+
+
+
 
     </script>
 </html>
