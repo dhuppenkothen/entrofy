@@ -95,8 +95,7 @@ crossorigin="anomyous"></script>
 
                 // get the selection ids
 
-//                var pre_selects = table.rows({selected: true}).indexes();
-                var pre_selects = [];
+                var pre_selects = table.rows({selected: true}).indexes();
                 function update_results(data) {
                     // kill all previous selections
                     table.rows().deselect();
@@ -104,14 +103,14 @@ crossorigin="anomyous"></script>
                     table.rows(data['selections']).select();
                 }
 
-            // Send to the server
-                    $.ajax({type: "POST",
+                // Send to the server
+                $.ajax({type: "POST",
                     url: '/h',
                     contentType: 'application/json',
                     data: JSON.stringify({data: raw_data, 
                                           columns: raw_columns,
                                           n_select: n_select,
-                                          pre_selects: pre_selects}),
+                                          pre_selects: pre_selects.toArray()}),
                     success: update_results,
                     dataType: 'json'});
         });

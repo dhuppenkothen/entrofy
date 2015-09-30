@@ -105,7 +105,7 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, n_samples=15):
         Indicies of the selected rows
 
     '''
-    if pre_selects is not None:
+    if pre_selects is not None and len(pre_selects):
         n_samples = 1
 
     results = [__entrofy(X, k, w=w, q=q, pre_selects=pre_selects)
