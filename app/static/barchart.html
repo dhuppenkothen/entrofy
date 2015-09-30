@@ -1,0 +1,30 @@
+<!Doctype HTML>
+<html>
+    <head>
+        <title>Bar Chart</title>
+        <script src="js/Chart.js"></script>
+        <script src="js/index.js"></script>
+    </head>
+    <body>
+        <canvas id="BarChartLoc" height="300" width="300"></canvas>
+        <script>
+    var selected = [10, 20];
+    var target = [30, 30];
+    var all = [80,70];
+    var labels = ["female", "male"];
+    var data = parse_data(selected, target, all, labels)
+    var myBarChart = make_barChart(data, "BarChartLoc")
+    
+    function update_example_chart(myBarChart){
+        var new_selected = [50, 60];
+        var new_target = [65, 44];
+        var myBarChart = updateBarChart(myBarChart, new_selected, new_target);
+    } 
+    
+        </script>
+
+<button type="button" onclick="update_example_chart(myBarChart)">Submit</button>
+
+
+    </body>
+</html> 
