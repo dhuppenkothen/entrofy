@@ -31,9 +31,10 @@ function parse_data(selected, target, all, labels){
       return data
 }
 
-function make_barChart(data) {
-     var myBarChart = new Chart(document.getElementById("BarChartLoc").getContext("2d")).Bar(data);
- return myBarChart}
+function make_barChart(data, chartLoc) {
+     var myBarChart = new Chart(document.getElementById(chartLoc).getContext("2d")).Bar(data);
+     myBarChart.generate_legend();
+     return myBarChart}
 
 
 function updateBarChart(myBarChart, selected, target){
@@ -46,5 +47,17 @@ function updateBarChart(myBarChart, selected, target){
         }
     return myBarChart;
 }
+function changeTarget(myBarChart) {
+    var x = document.getElementById("target").value;
+    myBarChart.datasets[0].bars[0].value = x;
+    myBarChart.update;
+    return myBarChart
+}
 
+function changeSelected(myBarChart){
+    var x = document.getElementById("selected").value;
+    myBarChart.datasets[0].bars[1].value = x;
+    myBarChart.update;
+    return myBarChart;
+}
 
