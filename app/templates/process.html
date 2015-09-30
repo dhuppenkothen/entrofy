@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="container col-md-9">
-            <table id="data_table"></table>
+            <table id="data_table" class="table table-striped table-bordered"></table>
         </div>
 
     </body>
@@ -42,11 +42,19 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script> 
-    <script
-src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bootstrap-table-export.min.js"></script>
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css">
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
+crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"
+crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"
+crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.html5.min.js"
+crossorigin="anomyous"></script>
+    <script src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"
+crossorigin="anomyous"></script>
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" 
@@ -57,6 +65,20 @@ src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bo
     <script>
         var table = {{ table |safe }};
 
+
+        $(document).ready(function() {
+            $('#data_table').DataTable({
+                paging: true,
+                data: table,
+                ordering: false,
+                columns: {{ columns|safe}} ,
+                dom: 'Bfrtip',
+                buttons: ['csvHtml5'],
+                select: true,
+            });
+
+        });
+/*
         $('#data_table').bootstrapTable({
             pagination: true,
             clickToSelect: true,
@@ -103,6 +125,6 @@ src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bo
                 success: update_results,
                 dataType: 'json'});
         });
-
+*/
     </script>
 </html>

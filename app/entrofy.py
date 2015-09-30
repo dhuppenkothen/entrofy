@@ -153,11 +153,10 @@ def process_csv(fdesc):
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
     df = binarize(df).reset_index()
 
-    headers = [dict(field='select', title='Selected', checkbox=True)]
-
+    headers = []
     headers.extend([dict(field=_, title=_) for _ in df.columns])
 
-    return df.to_json(orient='records'), headers, len(df)
+    return df.to_json(orient='values'), headers, len(df)
 
 
 def process_table(data, k, pre_selects):
