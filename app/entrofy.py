@@ -150,4 +150,7 @@ def binarize(df, n_bins=5):
 def process_csv(fdesc):
 
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
-    return binarize(df).to_json()
+    df = binarize(df).reset_index()
+
+    headers = [dict(field=_, title=_) for _ in df.columns]
+    return df.to_json(orient='records'), headers
