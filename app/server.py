@@ -41,9 +41,6 @@ def run(**kwargs):
 @app.route('/p', methods=['POST'])
 def process():
 
-    print(request)
-    print(request.files)
-
     fdesc = request.files['csv']
 
     table, columns = entrofy.process_csv(fdesc)

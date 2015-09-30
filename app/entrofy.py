@@ -140,7 +140,7 @@ def binarize(df, n_bins=5):
             if not np.any(new_series):
                 continue
 
-            new_name = '{}__{}'.format(column, value)
+            new_name = '_{}__{}'.format(column, value)
             df2[new_name] = new_series
             df2[new_name][pd.isnull(data)] = np.nan
 
@@ -152,7 +152,7 @@ def process_csv(fdesc):
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
     df = binarize(df).reset_index()
 
-    headers = [dict(field='pre_select', title='Pre-selected', checkbox=True)]
+    headers = [dict(field='select', title='Selected', checkbox=True)]
 
     headers.extend([dict(field=_, title=_) for _ in df.columns])
 

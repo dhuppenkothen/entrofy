@@ -33,17 +33,23 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.js"></script> 
+    <script
+src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bootstrap-table-export.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" 
             integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
             crossorigin="anonymous"></script>
 
+    <script src="/static/js/tableExport.min.js"></script>
     <script src="/static/js/process.js"></script>
     <script>
         var table = {{ table |safe }};
-        var table = $('#data_table').bootstrapTable({
-            pagination: true,
+
+        $('#data_table').bootstrapTable({
+            pagination: false,
             clickToSelect: true,
             maintainSelected: true,
             search: true,
@@ -51,6 +57,9 @@
             undefinedText: '-',
             sortable: false,
             showColumns: true,
+            showExport: true,
+            exportDataType: 'selected',
+            height: 520,
             columns: {{ columns|safe }} });
     </script>
 </html>
