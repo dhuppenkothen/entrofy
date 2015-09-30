@@ -1,0 +1,21 @@
+career_stage,country,first_time,gender,name,subfield
+grad-student,OECD,returning,female,Justine Skelly,cosmology
+junior-faculty,non-OECD,returning,male,John Hughes,astrophysics
+senior-faculty,OECD,first_time,male,Karl Carroll,exoplanets
+junior-faculty,OECD,returning,female,Jean Mcmichael,solar
+senior-faculty,non-OECD,returning,female,Ruth Devilbiss,astrophysics
+grad-student,OECD,first_time,male,Patrick Cargill,cosmology
+senior-faculty,OECD,returning,male,Frank Esquer,astrophysics
+senior-faculty,OECD,first_time,female,Lois Brooks,astrophysics
+senior-faculty,OECD,first_time,female,Georgia Suarez,exoplanets
+senior-faculty,OECD,returning,female,Lucy Udo,astrophysics
+grad-student,OECD,first_time,female,Pamela Fairchild,cosmology
+grad-student,OECD,first_time,male,Frank Vig,exoplanets
+junior-faculty,OECD,first_time,male,John Dunn,solar
+grad-student,OECD,first_time,female,Bernie Mack,solar
+grad-student,OECD,returning,female,Geraldine Arispe,exoplanets
+junior-faculty,OECD,first_time,female,Henrietta Miller,exoplanets
+junior-faculty,OECD,first_time,female,Andrea Hicks,exoplanets
+junior-faculty,OECD,returning,female,Antoinette Ruth,solar
+grad-student,non-OECD,first_time,male,Stefan Jones,
+grad-student,OECD,first_time,female,Jessica Larson,astrophysics

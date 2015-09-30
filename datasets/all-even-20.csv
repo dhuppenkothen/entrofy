@@ -1,0 +1,21 @@
+career_stage,country,first_time,gender,name,subfield
+grad-student,OECD,returning,male,Roy Ferebee,cosmology
+junior-faculty,non-OECD,returning,male,Kenneth Mills,astrophysics
+senior-faculty,OECD,first_time,female,Jan Rodriquez,exoplanets
+grad-student,OECD,first_time,male,Shelby Blake,cosmology
+junior-faculty,non-OECD,first_time,other,Carmen Sawer,astrophysics
+junior-faculty,OECD,returning,male,Henry Joslyn,solar
+grad-student,OECD,first_time,male,Jerry Johnson,
+grad-student,OECD,returning,female,Debra Ward,exoplanets
+grad-student,OECD,first_time,male,Christopher Wooten,astrophysics
+junior-faculty,non-OECD,returning,male,James Huey,astrophysics
+junior-faculty,non-OECD,first_time,female,Christina Mangrum,astrophysics
+senior-faculty,non-OECD,first_time,female,Mazie Vlashi,cosmology
+senior-faculty,non-OECD,,male,David Frazier,cosmology
+grad-student,non-OECD,returning,male,John Smith,exoplanets
+,non-OECD,returning,female,Martha Williams,exoplanets
+grad-student,non-OECD,first_time,female,Jean Thompson,solar
+senior-faculty,OECD,first_time,female,Monica Shotwell,astrophysics
+senior-faculty,non-OECD,first_time,female,Irene Lang,cosmology
+junior-faculty,OECD,first_time,female,Sarah Oneal,solar
+junior-faculty,OECD,returning,female,Judie Bertholf,astrophysics

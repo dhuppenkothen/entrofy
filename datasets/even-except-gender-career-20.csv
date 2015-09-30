@@ -1,0 +1,21 @@
+career_stage,country,first_time,gender,name,subfield
+grad-student,OECD,first_time,female,Susan Alex,cosmology
+senior-faculty,OECD,first_time,female,Bertha Criswell,solar
+grad-student,non-OECD,returning,female,Melanie Risser,solar
+grad-student,OECD,returning,male,George Maciejewski,solar
+senior-faculty,OECD,first_time,male,Efrain Hefner,exoplanets
+grad-student,non-OECD,first_time,male,Daniel Smith,solar
+senior-faculty,non-OECD,first_time,male,John Perkins,astrophysics
+senior-faculty,non-OECD,returning,male,David Huot,exoplanets
+senior-faculty,OECD,first_time,male,Robert Menter,solar
+junior-faculty,non-OECD,first_time,male,Vance Champagne,exoplanets
+senior-faculty,OECD,first_time,male,Oscar Fernandez,cosmology
+senior-faculty,OECD,first_time,male,Michael Cowan,astrophysics
+senior-faculty,non-OECD,first_time,male,Tracy Bernal,cosmology
+junior-faculty,OECD,first_time,female,Lucile Grimsley,cosmology
+senior-faculty,non-OECD,first_time,male,Carlos Cepeda,exoplanets
+senior-faculty,non-OECD,first_time,female,Colleen Viens,astrophysics
+senior-faculty,non-OECD,first_time,male,Daniel Alva,exoplanets
+senior-faculty,OECD,first_time,male,Donald Vinson,exoplanets
+senior-faculty,non-OECD,first_time,male,Jacob Ahmed,astrophysics
+senior-faculty,non-OECD,returning,male,Richard Poynter,astrophysics
