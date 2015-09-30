@@ -33,31 +33,19 @@ function parse_data(selected, target, all, labels){
 
 function make_barChart(data, chartLoc) {
      var myBarChart = new Chart(document.getElementById(chartLoc).getContext("2d")).Bar(data);
-     myBarChart.generate_legend();
-     return myBarChart}
+     return myBarChart;}
 
 
 function updateBarChart(myBarChart, selected, target){
-    var bla = 0;
     for (i=0; i < selected.length; i++){
         myBarChart.datasets[0].bars[i].value=selected[i];
         }
+    myBarChart.update();
     for (i=0; i < target.length; i++){
         myBarChart.datasets[1].bars[i].value=target[i];        
         }
+    myBarChart.update();
     return myBarChart;
-}
-function changeTarget(myBarChart) {
-    var x = document.getElementById("target").value;
-    myBarChart.datasets[0].bars[0].value = x;
-    myBarChart.update;
-    return myBarChart
 }
 
-function changeSelected(myBarChart){
-    var x = document.getElementById("selected").value;
-    myBarChart.datasets[0].bars[1].value = x;
-    myBarChart.update;
-    return myBarChart;
-}
 
