@@ -41,7 +41,8 @@ def run(**kwargs):
 def sample():
 
     data = request.get_json()
-    rows = entrofy.process_table(data['data'], int(data['n_select']), data['pre_selects'])
+    rows = entrofy.process_table(data['data'], data['columns'],
+                                 int(data['n_select']), data['pre_selects'])
     return json.encode(dict(selections=list(rows[1])))
 
 

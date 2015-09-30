@@ -154,14 +154,14 @@ def process_csv(fdesc):
     df = binarize(df).reset_index()
 
     headers = []
-    headers.extend([dict(field=_, title=_) for _ in df.columns])
+    headers.extend([dict(title=_) for _ in df.columns])
 
     return df.to_json(orient='values'), headers, len(df)
 
 
-def process_table(data, k, pre_selects):
+def process_table(data, columns, k, pre_selects):
 
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame(data=data, columns=[_['title'] for _ in columns])
     # Find the index column
     for column in df:
         if column[0] != '_':

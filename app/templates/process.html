@@ -47,11 +47,15 @@
 
     <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
 crossorigin="anonymous"></script>
-    <script src="//cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"
-crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"
 crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"
+crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.flash.min.js"
+crossorigin="anomyous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.html5.min.js"
+crossorigin="anomyous"></script>
+    <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.bootstrap.min.js"
 crossorigin="anomyous"></script>
     <script src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"
 crossorigin="anomyous"></script>
@@ -63,21 +67,57 @@ crossorigin="anomyous"></script>
 
     <script src="/static/js/tableExport.min.js"></script>
     <script>
-        var table = {{ table |safe }};
-
-
+        var raw_data = {{ table |safe }};
+        var raw_columns = {{ columns|safe }};
         $(document).ready(function() {
-            $('#data_table').DataTable({
+            var table = $('#data_table').DataTable({
                 paging: true,
-                data: table,
+                data: raw_data,
                 ordering: false,
-                columns: {{ columns|safe}} ,
+                columns: raw_columns,
+
                 dom: 'Bfrtip',
-                buttons: ['csvHtml5'],
-                select: true,
+                buttons: [
+                    {
+                        extend: 'excel',
+                        text: 'Save selected participants',
+                        exportOptions: { modifier: { selected: true } }
+                    },
+                    'selectNone',
+                ],
+                select: 'multi',
             });
 
+            $('#go').click(function() {
+                // Get the form data
+                var n_select = $('#n_select').val();
+                // TODO: get target distribution and weights
+
+                // get the selection ids
+
+//                var pre_selects = table.rows({selected: true}).indexes();
+                var pre_selects = [];
+                function update_results(data) {
+                    // kill all previous selections
+                    table.rows().deselect();
+
+                    table.rows(data['selections']).select();
+                }
+
+            // Send to the server
+                    $.ajax({type: "POST",
+                    url: '/h',
+                    contentType: 'application/json',
+                    data: JSON.stringify({data: raw_data, 
+                                          columns: raw_columns,
+                                          n_select: n_select,
+                                          pre_selects: pre_selects}),
+                    success: update_results,
+                    dataType: 'json'});
         });
+
+        });
+
 /*
         $('#data_table').bootstrapTable({
             pagination: true,
@@ -92,39 +132,6 @@ crossorigin="anomyous"></script>
             exportDataType: 'selected',
             columns: {{ columns|safe }} });
 
-        $('#go').click(function() {
-            // Get the form data
-            var n_select = $('#n_select').val();
-            var data = $('#data_table').bootstrapTable('getData');
-
-            // TODO: get target distribution and weights
-
-            // get the selection ids
-
-            var pre_selects = [];
-            $('input[name="btSelectItem"]:checked').each(function() {
-                pre_selects.push($(this).data('index'));
-            });
-
-            function update_results(data) {
-                // kill all previous selections
-                $('#data_table').bootstrapTable('uncheckAll');
-
-                data['selections'].map(function(row) {
-                    $('#data_table').bootstrapTable('check', row);
-                });
-            }
-
-            // Send to the server
-            $.ajax({type: "POST",
-                url: '/h',
-                contentType: 'application/json',
-                data: JSON.stringify({data: data, 
-                                      n_select: n_select,
-                                      pre_selects: pre_selects}),
-                success: update_results,
-                dataType: 'json'});
-        });
 */
     </script>
 </html>
