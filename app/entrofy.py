@@ -152,5 +152,8 @@ def process_csv(fdesc):
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
     df = binarize(df).reset_index()
 
-    headers = [dict(field=_, title=_) for _ in df.columns]
+    headers = [dict(field='pre_select', title='Pre-selected', checkbox=True)]
+
+    headers.extend([dict(field=_, title=_) for _ in df.columns])
+
     return df.to_json(orient='records'), headers

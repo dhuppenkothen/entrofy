@@ -42,8 +42,15 @@
     <script src="/static/js/process.js"></script>
     <script>
         var table = {{ table |safe }};
-        $('#data_table').bootstrapTable({
-            columns: {{ columns|safe }},
-            data: table});
+        var table = $('#data_table').bootstrapTable({
+            pagination: true,
+            clickToSelect: true,
+            maintainSelected: true,
+            search: true,
+            data: table,
+            undefinedText: '-',
+            sortable: false,
+            showColumns: true,
+            columns: {{ columns|safe }} });
     </script>
 </html>
