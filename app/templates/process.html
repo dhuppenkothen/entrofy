@@ -19,8 +19,18 @@
             <small>Maximum entropy conference participation</small>
             </h1>
         </div>
-        <div class="container">
+        <div class="container col-md-2">
             <!-- EVERYTHING GOES HERE -->
+            <div class="form-group">
+                <label for="n_select">Target number of participants</label>
+                <input class="form-control" type="number" min="1" max="{{ kmax }}"
+                name="n_select" id="n_select" value="10" size="4">
+                <button type="button" id="go" name="go" class="btn btn-default">
+                    Go!
+                </button>
+            </div>
+        </div>
+        <div class="container col-md-9">
             <table id="data_table"></table>
         </div>
 
@@ -44,12 +54,11 @@ src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bo
             crossorigin="anonymous"></script>
 
     <script src="/static/js/tableExport.min.js"></script>
-    <script src="/static/js/process.js"></script>
     <script>
         var table = {{ table |safe }};
 
         $('#data_table').bootstrapTable({
-            pagination: false,
+            pagination: true,
             clickToSelect: true,
             maintainSelected: true,
             search: true,
@@ -59,7 +68,41 @@ src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/extensions/export/bo
             showColumns: true,
             showExport: true,
             exportDataType: 'selected',
-            height: 520,
             columns: {{ columns|safe }} });
+
+        $('#go').click(function() {
+            // Get the form data
+            var n_select = $('#n_select').val();
+            var data = $('#data_table').bootstrapTable('getData');
+
+            // TODO: get target distribution and weights
+
+            // get the selection ids
+
+            var pre_selects = [];
+            $('input[name="btSelectItem"]:checked').each(function() {
+                pre_selects.push($(this).data('index'));
+            });
+
+            function update_results(data) {
+                // kill all previous selections
+                $('#data_table').bootstrapTable('uncheckAll');
+
+                data['selections'].map(function(row) {
+                    $('#data_table').bootstrapTable('check', row);
+                });
+            }
+
+            // Send to the server
+            $.ajax({type: "POST",
+                url: '/h',
+                contentType: 'application/json',
+                data: JSON.stringify({data: data, 
+                                      n_select: n_select,
+                                      pre_selects: pre_selects}),
+                success: update_results,
+                dataType: 'json'});
+        });
+
     </script>
 </html>

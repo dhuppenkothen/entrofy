@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import numpy as np
 import pandas as pd
@@ -156,4 +157,16 @@ def process_csv(fdesc):
 
     headers.extend([dict(field=_, title=_) for _ in df.columns])
 
-    return df.to_json(orient='records'), headers
+    return df.to_json(orient='records'), headers, len(df)
+
+
+def process_table(data, k, pre_selects):
+
+    df = pd.DataFrame.from_dict(data)
+    # Find the index column
+    for column in df:
+        if column[0] != '_':
+            df = df.set_index(column)
+            break
+
+    return entrofy(df.values.astype(np.float), k, pre_selects=pre_selects)

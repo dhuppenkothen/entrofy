@@ -37,17 +37,25 @@ def run(**kwargs):
     app.run(**kwargs)
 
 
+@app.route('/h', methods=['POST'])
+def sample():
+
+    data = request.get_json()
+    rows = entrofy.process_table(data['data'], int(data['n_select']), data['pre_selects'])
+    return json.encode(dict(selections=list(rows[1])))
+
 
 @app.route('/p', methods=['POST'])
 def process():
 
     fdesc = request.files['csv']
 
-    table, columns = entrofy.process_csv(fdesc)
+    table, columns, n = entrofy.process_csv(fdesc)
 
     return render_template('process.html',
                            table=table,
-                           columns=json.dumps(columns))
+                           columns=json.dumps(columns),
+                           kmax=n)
 
 
 @app.route('/')
