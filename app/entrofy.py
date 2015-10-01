@@ -15,6 +15,9 @@ def obj(p, w, q):
     entropy = (p * (np.log(p + amin) - np.log(q + amin)) +
                pbar * (np.log(pbar + amin) - np.log(qbar + amin)))
 
+    # We won't count cells with nans
+    entropy[np.isnan(entropy)] = 0
+
     return - entropy.dot(w)
 
 
@@ -62,8 +65,11 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None):
         # Knock out the points we've already taken
         delta[y] = -np.inf
 
-        # Select the top score
-        y[np.argmax(delta)] = True
+        # Select the top score.  Break near-ties randomly.
+        target_score = delta.max()
+        target_score = target_score - 1e-2 * np.abs(target_score)
+        new_idx = np.random.choice(np.flatnonzero(delta >= target_score))
+        y[new_idx] = True
 
     return obj(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
 
