@@ -92,21 +92,13 @@ crossorigin="anonymous"></script>
         $(document).ready(function() {
             // build the advanced controls
 
-            var columns = raw_columns.slice(1).map(function(x) { return x.title; });
-
-            var my_targets = columns.map(function(x) { return targets[x]; })
-
             var controls = $('#controls');
+            var columns = raw_columns.slice(1).map(function(x) { return x.title; });
 
             columns.map(function(c) {
                 // Construct an input group for this column
-                // The target value
-                var t = targets[c];
 
-                // Create a new input group
-
-
-
+                // Create a new form group
                 var div = $('<div>').appendTo(controls);
                 div.addClass('form-group');
 
@@ -129,6 +121,7 @@ crossorigin="anonymous"></script>
                                 .append(c);
 
                 var cdiv = $('<div>').addClass('col-sm-3');
+
                 cdiv.append(input);
                 div.append(label);
                 div.append(cdiv);
@@ -159,14 +152,23 @@ crossorigin="anonymous"></script>
                 ],
             });
 
+            function get_targets() {
+                return columns.map(function(c) {
+                    // Get the form element
+                    return $('.target#'+c).val();
+                });
+            }
+
             $('#go').click(function() {
                 // Get the form data
                 var n_select = $('#n_select').val();
 
-                // TODO: get target distribution and weights
+                // get target distribution and weights
+                var dtargets = get_targets();
 
                 // get the ids of pre-selected rows
                 var pre_selects = table.rows({selected: true}).indexes();
+
                 function update_results(data) {
                     // kill all previous selections
                     table.rows().deselect();
@@ -175,6 +177,7 @@ crossorigin="anonymous"></script>
 
                     console.log('Raw stats: ' + data['p_all']);
                     console.log('Selected stats: ' + data['p_selected']);
+                    console.log('Target stats: ' + dtargets);
                 }
 
                 // Send to the server
@@ -183,6 +186,7 @@ crossorigin="anonymous"></script>
                     contentType: 'application/json',
                     data: JSON.stringify({data: raw_data, 
                                           index: raw_columns[0].title,
+                                          target: dtargets,
                                           columns: raw_columns,
                                           n_select: n_select,
                                           pre_selects: pre_selects.toArray()}),

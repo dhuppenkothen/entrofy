@@ -48,6 +48,7 @@ def sample():
                                  data['index'],
                                  data['columns'],
                                  int(data['n_select']),
+                                 data['target'],
                                  pre_selects)
 
     return json.encode(dict(selections=list(rows),
