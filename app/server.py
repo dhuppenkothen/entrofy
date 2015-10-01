@@ -44,7 +44,9 @@ def sample():
     pre_selects = data['pre_selects']
     if len(pre_selects) == 0:
         pre_selects = None
-    score, rows, p_all, p_selected = entrofy.process_table(data['data'], data['columns'],
+    score, rows, p_all, p_selected = entrofy.process_table(data['data'],
+                                 data['index'],
+                                 data['columns'],
                                  int(data['n_select']),
                                  pre_selects)
 

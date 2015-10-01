@@ -158,7 +158,7 @@ def binarize(df, n_bins=5):
                 continue
 
             z += 1.0
-            new_name = '_{}__{}'.format(column, value)
+            new_name = '{}_{}'.format(column, value)
             df2[new_name] = new_series
             df2[new_name][pd.isnull(data)] = np.nan
             groupkeys.append(new_name)
@@ -181,14 +181,11 @@ def process_csv(fdesc):
     return df.to_json(orient='values'), headers, targets, len(df)
 
 
-def process_table(data, columns, k, pre_selects):
+def process_table(data, index, columns, k, pre_selects):
 
     df = pd.DataFrame(data=data, columns=[_['title'] for _ in columns])
     # Find the index column
-    for column in df:
-        if column[0] != '_':
-            df = df.set_index(column)
-            break
+    df = df.set_index(index)
 
     X = df.values.astype(np.float)
     score, rows = entrofy(X, k, pre_selects=pre_selects)

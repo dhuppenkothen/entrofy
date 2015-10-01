@@ -139,6 +139,7 @@ crossorigin="anonymous"></script>
                     url: '/h',
                     contentType: 'application/json',
                     data: JSON.stringify({data: raw_data, 
+                                          index: raw_columns[0].title,
                                           columns: raw_columns,
                                           n_select: n_select,
                                           pre_selects: pre_selects.toArray()}),
