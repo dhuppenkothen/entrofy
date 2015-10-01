@@ -49,6 +49,7 @@ def sample():
                                  data['columns'],
                                  int(data['n_select']),
                                  data['target'],
+                                 data['weights'],
                                  pre_selects)
 
     return json.encode(dict(selections=list(rows),

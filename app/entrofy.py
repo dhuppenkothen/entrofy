@@ -181,14 +181,16 @@ def process_csv(fdesc):
     return df.to_json(orient='values'), headers, targets, len(df)
 
 
-def process_table(data, index, columns, k, q, pre_selects):
+def process_table(data, index, columns, k, q, w, pre_selects):
 
     df = pd.DataFrame(data=data, columns=[_['title'] for _ in columns])
     # Find the index column
     df = df.set_index(index)
 
     X = df.values.astype(np.float)
-    score, rows = entrofy(X, k, q=np.asarray([float(_) for _ in q]), pre_selects=pre_selects)
+    score, rows = entrofy(X, k, q=np.asarray([float(_) for _ in q]),
+                                w=np.asarray([float(_) for _ in w]),
+                                pre_selects=pre_selects)
 
     p_all = compute_p(X)
     p_selected = compute_p(X[rows])

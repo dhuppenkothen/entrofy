@@ -102,7 +102,7 @@ crossorigin="anonymous"></script>
                 var div = $('<div>').appendTo(controls);
                 div.addClass('form-group');
 
-                var input = $('<input>')
+                var t_input = $('<input>')
                                 .attr('type', "number")
                                 .attr('min', 0)
                                 .attr('max', 1)
@@ -113,6 +113,16 @@ crossorigin="anonymous"></script>
                                 .addClass('target')
                                 .attr('id', c)
                                 .val(targets[c] * 1.0);
+                var w_input = $('<input>')
+                                .attr('type', "number")
+                                .attr('min', 0)
+                                .attr('max', 10)
+                                .attr('maxlength', 2)
+                                .attr('size', 2)
+                                .addClass('form-control')
+                                .addClass('weight')
+                                .attr('id', c)
+                                .val(1);
 
                 var label = $('<label>')
                                 .addClass('control-label')
@@ -122,8 +132,9 @@ crossorigin="anonymous"></script>
 
                 var cdiv = $('<div>').addClass('col-sm-3');
 
-                cdiv.append(input);
                 div.append(label);
+                cdiv.append(t_input);
+                cdiv.append(w_input);
                 div.append(cdiv);
             });
 
@@ -152,10 +163,10 @@ crossorigin="anonymous"></script>
                 ],
             });
 
-            function get_targets() {
+            function get_targets(q) {
                 return columns.map(function(c) {
                     // Get the form element
-                    return $('.target#'+c).val();
+                    return $(q + '#'+c).val();
                 });
             }
 
@@ -164,7 +175,10 @@ crossorigin="anonymous"></script>
                 var n_select = $('#n_select').val();
 
                 // get target distribution and weights
-                var dtargets = get_targets();
+                var dtargets = get_targets('.target');
+
+                // get the weighting over columns
+                var weights = get_targets('.weight');
 
                 // get the ids of pre-selected rows
                 var pre_selects = table.rows({selected: true}).indexes();
@@ -178,6 +192,7 @@ crossorigin="anonymous"></script>
                     console.log('Raw stats: ' + data['p_all']);
                     console.log('Selected stats: ' + data['p_selected']);
                     console.log('Target stats: ' + dtargets);
+                    console.log('Target weights: ' + weights);
                 }
 
                 // Send to the server
@@ -187,6 +202,7 @@ crossorigin="anonymous"></script>
                     data: JSON.stringify({data: raw_data, 
                                           index: raw_columns[0].title,
                                           target: dtargets,
+                                          weights: weights,
                                           columns: raw_columns,
                                           n_select: n_select,
                                           pre_selects: pre_selects.toArray()}),
