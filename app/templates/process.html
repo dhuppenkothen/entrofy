@@ -31,20 +31,19 @@
             </div>
         </div>
         <div class="container col-md-9">
-            <table id="data_table" class="table table-striped table-bordered"></table>
+            <table id="table" class="table table-striped table-bordered"
+                style="white-space: nowrap"></table>
         </div>
 
     </body>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.8.1/bootstrap-table.min.css">
-
-    <!-- Latest compiled and minified JavaScript -->
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/fixedcolumns/3.0.0/css/dataTables.fixedColumns.min.css">
 
+    <!-- Latest compiled and minified JavaScript -->
     <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
 crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"
@@ -52,31 +51,35 @@ crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"
 crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.flash.min.js"
-crossorigin="anomyous"></script>
+crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.html5.min.js"
-crossorigin="anomyous"></script>
+crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.bootstrap.min.js"
-crossorigin="anomyous"></script>
+crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"
-crossorigin="anomyous"></script>
+crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/fixedcolumns/3.1.0/js/dataTables.fixedColumns.min.js"
+crossorigin="anonymous"></script>
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" 
             integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
             crossorigin="anonymous"></script>
 
-    <script src="/static/js/tableExport.min.js"></script>
     <script>
         var raw_data = {{ table |safe }};
         var raw_columns = {{ columns|safe }};
         $(document).ready(function() {
-            var table = $('#data_table').DataTable({
+            var table = $('#table').DataTable({
                 paging: true,
                 data: raw_data,
                 ordering: false,
                 columns: raw_columns,
                 scrollX: true,
-
+                scrollY: 420,
+                scrollCollapse: true,
+                fixedColumns: true,
+                select: 'multi',
                 dom: 'Bfrtip',
                 buttons: [
                     {
@@ -86,7 +89,6 @@ crossorigin="anomyous"></script>
                     },
                     'selectNone',
                 ],
-                select: 'multi',
             });
 
             $('#go').click(function() {
@@ -114,8 +116,7 @@ crossorigin="anomyous"></script>
                                           pre_selects: pre_selects.toArray()}),
                     success: update_results,
                     dataType: 'json'});
-        });
-
+            });
         });
 
     </script>
