@@ -41,8 +41,12 @@ def run(**kwargs):
 def sample():
 
     data = request.get_json()
+    pre_selects = data['pre_selects']
+    if len(pre_selects) == 0:
+        pre_selects = None
     rows = entrofy.process_table(data['data'], data['columns'],
-                                 int(data['n_select']), data['pre_selects'])
+                                 int(data['n_select']),
+                                 pre_selects)
     return json.encode(dict(selections=list(rows[1])))
 
 
