@@ -15,7 +15,7 @@ def obj(p, w, q):
     entropy = (p * (np.log(p + amin) - np.log(q + amin)) +
                pbar * (np.log(pbar + amin) - np.log(qbar + amin)))
 
-    # We won't count cells with nans
+    # We won't count nan-cells in the score calculation
     entropy[np.isnan(entropy)] = 0
 
     return - entropy.dot(w)
@@ -67,7 +67,7 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None):
 
         # Select the top score.  Break near-ties randomly.
         target_score = delta.max()
-        target_score = target_score - 1e-2 * np.abs(target_score)
+        target_score = target_score - 1e-3 * np.abs(target_score)
         new_idx = np.random.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
@@ -174,4 +174,14 @@ def process_table(data, columns, k, pre_selects):
             df = df.set_index(column)
             break
 
-    return entrofy(df.values.astype(np.float), k, pre_selects=pre_selects)
+    X = df.values.astype(np.float)
+    score, rows = entrofy(X, k, pre_selects=pre_selects)
+
+    p_all = compute_p(X)
+    p_selected = compute_p(X[rows])
+
+    return score, rows, p_all, p_selected
+
+def compute_p(X):
+
+    return np.nanmean(X, axis=0)

@@ -82,7 +82,7 @@ crossorigin="anonymous"></script>
                 buttons: [
                     {
                         extend: 'csvHtml5',
-                        text: 'Save selected participants',
+                        text: 'Save CSV',
                         exportOptions: { modifier: { selected: true } }
                     },
                     'selectNone',
@@ -102,6 +102,9 @@ crossorigin="anonymous"></script>
                     table.rows().deselect();
 
                     table.rows(data['selections']).select();
+
+                    console.log('Raw stats: ' + data['p_all']);
+                    console.log('Selected stats: ' + data['p_selected']);
                 }
 
                 // Send to the server

@@ -44,10 +44,13 @@ def sample():
     pre_selects = data['pre_selects']
     if len(pre_selects) == 0:
         pre_selects = None
-    rows = entrofy.process_table(data['data'], data['columns'],
+    score, rows, p_all, p_selected = entrofy.process_table(data['data'], data['columns'],
                                  int(data['n_select']),
                                  pre_selects)
-    return json.encode(dict(selections=list(rows[1])))
+
+    return json.encode(dict(selections=list(rows),
+                            p_all=list(p_all),
+                            p_selected=list(p_selected)))
 
 
 @app.route('/p', methods=['POST'])
