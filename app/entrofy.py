@@ -153,16 +153,15 @@ def process_csv(fdesc):
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
     df = binarize(df).reset_index()
 
-    headers = [dict(field='select', title='Selected', checkbox=True)]
+    headers = []
+    headers.extend([dict(title=_) for _ in df.columns])
 
-    headers.extend([dict(field=_, title=_) for _ in df.columns])
-
-    return df.to_json(orient='records'), headers, len(df)
+    return df.to_json(orient='values'), headers, len(df)
 
 
-def process_table(data, k, pre_selects):
+def process_table(data, columns, k, pre_selects):
 
-    df = pd.DataFrame.from_dict(data)
+    df = pd.DataFrame(data=data, columns=[_['title'] for _ in columns])
     # Find the index column
     for column in df:
         if column[0] != '_':
