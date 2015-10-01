@@ -199,8 +199,8 @@ crossorigin="anonymous"></script>
                     console.log('Target weights: ' + weights);
                 }
 
-            // Send to the server
-                    $.ajax({type: "POST",
+                // Send to the server
+                $.ajax({type: "POST",
                     url: '/h',
                     contentType: 'application/json',
                     data: JSON.stringify({data: raw_data, 
@@ -209,79 +209,10 @@ crossorigin="anonymous"></script>
                                           weights: weights,
                                           columns: raw_columns,
                                           n_select: n_select,
-                                          pre_selects: pre_selects}),
+                                          pre_selects: pre_selects.toArray()}),
                     success: update_results,
                     dataType: 'json'});
-        });
-
-
-        var slider = new Slider('#ex1', {
-	formatter: function(value) {
-		return 'Current value: ' + value;
-	}
-});
-        });
-
-/*
-        $('#data_table').bootstrapTable({
-            pagination: true,
-            clickToSelect: true,
-            maintainSelected: true,
-            search: true,
-            data: table,
-            undefinedText: '-',
-            sortable: false,
-            showColumns: true,
-            showExport: true,
-            exportDataType: 'selected',
-            columns: {{ columns|safe }} });
-
-        $('#go').click(function() {
-            // Get the form data
-            var n_select = $('#n_select').val();
-            var data = $('#data_table').bootstrapTable('getData');
-
-            // TODO: get target distribution and weights
-
-            // get the selection ids
-
-            var pre_selects = [];
-            $('input[name="btSelectItem"]:checked').each(function() {
-                pre_selects.push($(this).data('index'));
             });
-
-            function update_results(data) {
-                // kill all previous selections
-                $('#data_table').bootstrapTable('uncheckAll');
-
-                data['selections'].map(function(row) {
-                    $('#data_table').bootstrapTable('check', row);
-                });
-            }
-
-            // Send to the server
-            $.ajax({type: "POST",
-                url: '/h',
-                contentType: 'application/json',
-                data: JSON.stringify({data: data, 
-                                      n_select: n_select,
-                                      pre_selects: pre_selects}),
-                success: update_results,
-                dataType: 'json'});
         });
-        $("#slider_button").click(function() {
-//            window.alert("Hello")
-            var data = $('#data_table').bootstrapTable('getData');
-            
-
-
-
-       });
-
-
-
-
-*/
-
     </script>
 </html>
