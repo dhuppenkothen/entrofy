@@ -22,21 +22,20 @@
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="headingOne">
+    <div class="panel-heading" role="tab" id="slider_heading">
       <h4 class="panel-title">
         <a role="button" id="slider_button" name="slider_button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
         Sliders</a>
       </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-          <div class="well">
-          <input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="1" data-slider-step="0.01" data-slider-value="0.5"/>
-          </div>
+    <div id="sliderone" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="slider_heading">
+     0 <input id="slide" type="range"min="0" max="1" step="0.001" value="0.5"onchange="updateSlider(this.value)" />1
+
+</div><br/>
+
     </div>
   </div>
         </div>
-      		<div class="well">
-				<input id="ex1" data-slider-id='ex1Slider' type="text" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="14"/>
 			</div>
         <div class="container col-md-2">
             <!-- EVERYTHING GOES HERE -->
@@ -95,7 +94,6 @@ crossorigin="anomyous"></script>
                 data: raw_data,
                 ordering: false,
                 columns: raw_columns,
-                scrollX: true,
 
                 dom: 'Bfrtip',
                 buttons: [
@@ -116,7 +114,8 @@ crossorigin="anomyous"></script>
 
                 // get the selection ids
 
-                var pre_selects = table.rows({selected: true}).indexes();
+//                var pre_selects = table.rows({selected: true}).indexes();
+                var pre_selects = [];
                 function update_results(data) {
                     // kill all previous selections
                     table.rows().deselect();
@@ -124,14 +123,14 @@ crossorigin="anomyous"></script>
                     table.rows(data['selections']).select();
                 }
 
-                // Send to the server
-                $.ajax({type: "POST",
+            // Send to the server
+                    $.ajax({type: "POST",
                     url: '/h',
                     contentType: 'application/json',
                     data: JSON.stringify({data: raw_data, 
                                           columns: raw_columns,
                                           n_select: n_select,
-                                          pre_selects: pre_selects.toArray()}),
+                                          pre_selects: pre_selects}),
                     success: update_results,
                     dataType: 'json'});
         });
