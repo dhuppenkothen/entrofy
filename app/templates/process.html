@@ -8,7 +8,7 @@
                 rel="stylesheet"
                 integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
                 crossorigin="anonymous">
-        <link href="css/bootstrap-slider.css" rel="stylesheet">    
+        <link href="/static/css/bootstrap-slider.css" rel="stylesheet">    
     <title>Entrofy</title>
 
     </head>
@@ -83,7 +83,7 @@ crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" 
             integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ=="
             crossorigin="anonymous"></script>
-
+    <script src="/static/js/bootstrap-slider.js"></script>
     <script>
         var raw_data = {{ table |safe }};
         var raw_columns = {{ columns|safe }};
@@ -103,16 +103,18 @@ crossorigin="anonymous"></script>
                 div.addClass('form-group');
 
                 var t_input = $('<input>')
-                                .attr('type', "number")
-                                .attr('min', 0)
-                                .attr('max', 1)
-                                .attr('step', 0.05)
+                                .attr('type', "text")
+                                .attr('data-slider-min', 0)
+                                .attr('data-slider-max', 1)
+                                .attr('data-slider-step', 0.01)
                                 .attr('maxlength', 4)
                                 .attr('size', 4)
                                 .addClass('form-control')
                                 .addClass('target')
                                 .attr('id', c)
-                                .val(targets[c] * 1.0);
+                                .attr('data-slider-id', c)
+                                .attr('data-slider-value', targets[c] * 1.0);
+                //t_input.slider({});
                 var w_input = $('<input>')
                                 .attr('type', "number")
                                 .attr('min', 0)
@@ -137,6 +139,8 @@ crossorigin="anonymous"></script>
                 cdiv.append(w_input);
                 div.append(cdiv);
             });
+
+            $(".target").slider();
 
             // build the table
             var table = $('#table').DataTable({
