@@ -13,26 +13,41 @@
 
     </head>
 
-    <body>
-        <div class="page-header" style="text-align: center">
-            <h1>Entrofy
-            <small>Maximum entropy conference participation</small>
-            </h1>
-        </div>
-        <div class="container col-md-2">
-            <!-- EVERYTHING GOES HERE -->
-            <div class="form-group">
-                <label for="n_select">Target number of participants</label>
-                <input class="form-control" type="number" min="1" max="{{ kmax }}"
-                name="n_select" id="n_select" value="10" size="4">
-                <button type="button" id="go" name="go" class="btn btn-default">
-                    Go!
-                </button>
+    <body class="has-drawer">
+        <div class="drawer dw-xs-10 dw-sm-6 dw-md-4 fold" id="drawerExample" 
+           aria-labelledby="drawerExample">
+            <div class="drawer-controls">
+                <a href="#drawerExample"
+                    data-toggle="drawer" 
+                    href="#drawerExample"
+                    aria-foldedopen="false" 
+                    aria-controls="drawerExample" 
+                    class="btn btn-primary btn-sm glyphicon glyphicon-menu-hamburger">Options</a>
+            </div>
+            <div class="drawer-contents">
+                <div class="drawer-heading">
+                    <h2 class="drawer-title"> Options </h2>
+                </div>
+                <div class="drawer-body" id="controls">
+                </div>
             </div>
         </div>
-        <div class="container col-md-9">
-            <table id="table" class="table table-striped table-bordered"
-                style="white-space: nowrap"></table>
+
+        <div class="container">
+            <div class="col-md-2 from-group">
+                <!-- EVERYTHING GOES HERE -->
+                    <label for="n_select">Target number of participants</label>
+                    <input class="form-control" type="number" min="1" max="{{ kmax }}"
+                    name="n_select" id="n_select" value="10" size="4">
+                    <button type="button" id="go" name="go" class="btn btn-default">
+                        Go!
+                    </button>
+            </div>
+
+            <div class="container col-md-10">
+                <table id="table" class="table table-striped table-bordered"
+                    style="white-space: nowrap"></table>
+            </div>
         </div>
 
     </body>
@@ -42,6 +57,7 @@
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/fixedcolumns/3.0.0/css/dataTables.fixedColumns.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.drawer.css">
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
@@ -56,6 +72,7 @@ crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.bootstrap.min.js"
 crossorigin="anonymous"></script>
     <script src="/static/js/dataTables.select.js"></script>
+    <script src="/static/js/drawer.js"></script>
     <script src="//cdn.datatables.net/fixedcolumns/3.1.0/js/dataTables.fixedColumns.min.js"
 crossorigin="anonymous"></script>
 
@@ -69,8 +86,12 @@ crossorigin="anonymous"></script>
         var raw_columns = {{ columns|safe }};
         var targets = {{ targets|safe }};
 
-        console.log(targets);
         $(document).ready(function() {
+            // build the advanced controls
+
+
+
+            // build the table
             var table = $('#table').DataTable({
                 paging: true,
                 data: raw_data,
