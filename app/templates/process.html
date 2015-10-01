@@ -13,44 +13,44 @@
 
     </head>
 
-    <body>
-        <div class="page-header" style="text-align: center">
-            <h1>Entrofy
-            <small>Maximum entropy conference participation</small>
-            </h1>
-        </div>
-
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-  <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="slider_heading">
-      <h4 class="panel-title">
-        <a role="button" id="slider_button" name="slider_button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-        Sliders</a>
-      </h4>
-    </div>
-    <div id="sliderone" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="slider_heading">
-     0 <input id="slide" type="range"min="0" max="1" step="0.001" value="0.5"onchange="updateSlider(this.value)" />1
-
-</div><br/>
-
-    </div>
-  </div>
-        </div>
-			</div>
-        <div class="container col-md-2">
-            <!-- EVERYTHING GOES HERE -->
-            <div class="form-group">
-                <label for="n_select">Target number of participants</label>
-                <input class="form-control" type="number" min="1" max="{{ kmax }}"
-                name="n_select" id="n_select" value="10" size="4">
-                <button type="button" id="go" name="go" class="btn btn-default">
-                    Go!
-                </button>
+    <body class="has-drawer">
+        <div class="drawer dw-xs-10 dw-sm-6 dw-md-4 fold" id="drawerExample" 
+           aria-labelledby="drawerExample">
+            <div class="drawer-controls">
+                <a href="#drawerExample"
+                    data-toggle="drawer" 
+                    href="#drawerExample"
+                    aria-foldedopen="false" 
+                    aria-controls="drawerExample" 
+                    class="btn btn-primary btn-sm glyphicon
+                    glyphicon-menu-hamburger"><span class="sr-only">Options</span></a>
+            </div>
+            <div class="drawer-contents">
+                <div class="drawer-heading">
+                    <h2 class="drawer-title"> Options </h2>
+                </div>
+                <div class="drawer-body">
+                    <form class="form-horizontal" id="controls">
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="container col-md-9">
-            <table id="table" class="table table-striped table-bordered"
-                style="white-space: nowrap"></table>
+
+        <div class="container">
+            <div class="col-md-2 from-group">
+                <!-- EVERYTHING GOES HERE -->
+                    <label for="n_select">Target number of participants</label>
+                    <input class="form-control" type="number" min="1" max="{{ kmax }}"
+                    name="n_select" id="n_select" value="10" size="4">
+                    <button type="button" id="go" name="go" class="btn btn-default">
+                        Go!
+                    </button>
+            </div>
+
+            <div class="container col-md-10">
+                <table id="table" class="table table-striped table-bordered"
+                    style="white-space: nowrap"></table>
+            </div>
         </div>
 
     </body>
@@ -60,6 +60,7 @@
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css">
     <link rel="stylesheet" href="//cdn.datatables.net/fixedcolumns/3.0.0/css/dataTables.fixedColumns.min.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.drawer.css">
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="//cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
@@ -74,6 +75,7 @@ crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/buttons/1.0.3/js/buttons.bootstrap.min.js"
 crossorigin="anonymous"></script>
     <script src="/static/js/dataTables.select.js"></script>
+    <script src="/static/js/drawer.js"></script>
     <script src="//cdn.datatables.net/fixedcolumns/3.1.0/js/dataTables.fixedColumns.min.js"
 crossorigin="anonymous"></script>
 
@@ -87,8 +89,56 @@ crossorigin="anonymous"></script>
         var raw_columns = {{ columns|safe }};
         var targets = {{ targets|safe }};
 
-        console.log(targets);
         $(document).ready(function() {
+            // build the advanced controls
+
+            var controls = $('#controls');
+            var columns = raw_columns.slice(1).map(function(x) { return x.title; });
+
+            columns.map(function(c) {
+                // Construct an input group for this column
+
+                // Create a new form group
+                var div = $('<div>').appendTo(controls);
+                div.addClass('form-group');
+
+                var t_input = $('<input>')
+                                .attr('type', "number")
+                                .attr('min', 0)
+                                .attr('max', 1)
+                                .attr('step', 0.05)
+                                .attr('maxlength', 4)
+                                .attr('size', 4)
+                                .addClass('form-control')
+                                .addClass('target')
+                                .attr('id', c)
+                                .val(targets[c] * 1.0);
+                var w_input = $('<input>')
+                                .attr('type', "number")
+                                .attr('min', 0)
+                                .attr('max', 10)
+                                .attr('maxlength', 2)
+                                .attr('size', 2)
+                                .addClass('form-control')
+                                .addClass('weight')
+                                .attr('id', c)
+                                .val(1);
+
+                var label = $('<label>')
+                                .addClass('control-label')
+                                .addClass('col-sm-4')
+                                .attr('for', c)
+                                .append(c);
+
+                var cdiv = $('<div>').addClass('col-sm-3');
+
+                div.append(label);
+                cdiv.append(t_input);
+                cdiv.append(w_input);
+                div.append(cdiv);
+            });
+
+            // build the table
             var table = $('#table').DataTable({
                 paging: true,
                 data: raw_data,
@@ -113,15 +163,26 @@ crossorigin="anonymous"></script>
                 ],
             });
 
+            function get_targets(q) {
+                return columns.map(function(c) {
+                    // Get the form element
+                    return $(q + '#'+c).val();
+                });
+            }
+
             $('#go').click(function() {
                 // Get the form data
                 var n_select = $('#n_select').val();
-                // TODO: get target distribution and weights
 
-                // get the selection ids
+                // get target distribution and weights
+                var dtargets = get_targets('.target');
 
-//                var pre_selects = table.rows({selected: true}).indexes();
-                var pre_selects = [];
+                // get the weighting over columns
+                var weights = get_targets('.weight');
+
+                // get the ids of pre-selected rows
+                var pre_selects = table.rows({selected: true}).indexes();
+
                 function update_results(data) {
                     // kill all previous selections
                     table.rows().deselect();
@@ -130,6 +191,8 @@ crossorigin="anonymous"></script>
 
                     console.log('Raw stats: ' + data['p_all']);
                     console.log('Selected stats: ' + data['p_selected']);
+                    console.log('Target stats: ' + dtargets);
+                    console.log('Target weights: ' + weights);
                 }
 
             // Send to the server
@@ -137,6 +200,9 @@ crossorigin="anonymous"></script>
                     url: '/h',
                     contentType: 'application/json',
                     data: JSON.stringify({data: raw_data, 
+                                          index: raw_columns[0].title,
+                                          target: dtargets,
+                                          weights: weights,
                                           columns: raw_columns,
                                           n_select: n_select,
                                           pre_selects: pre_selects}),
