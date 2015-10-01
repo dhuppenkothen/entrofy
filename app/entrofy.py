@@ -15,9 +15,6 @@ def obj(p, w, q):
     entropy = (p * (np.log(p + amin) - np.log(q + amin)) +
                pbar * (np.log(pbar + amin) - np.log(qbar + amin)))
 
-    # We won't count nan-cells in the score calculation
-    entropy[np.isnan(entropy)] = 0
-
     return - entropy.dot(w)
 
 
@@ -50,6 +47,9 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None):
 
     y[pre_selects] = True
 
+    # Where do we have missing data?
+    Xn = np.isnan(X)
+
     while True:
         i = y.sum()
         if i >= k:
@@ -57,9 +57,15 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None):
 
         # Initialize the distribution vector
         p = np.nanmean(X[y], axis=0)
+        p[np.isnan(p)] = 0.0
 
-        # Compute the marginal gains
+        # Compute the candidate distributions
         p_new = (p * i + X) / (i + 1.0)
+
+        # Wherever X is nan, propagate the old p since we have no new information
+        p_new[Xn] = (Xn * p)[Xn]
+
+        # Compute marginal gain for each candidate
         delta = obj(p_new, w, q) - obj(p, w, q)
 
         # Knock out the points we've already taken
