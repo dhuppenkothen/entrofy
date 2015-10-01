@@ -130,6 +130,8 @@ def binarize(df, n_bins=5):
 
     df2 = pd.DataFrame(index=df.index)
 
+    targets = {}
+
     for column in df:
         # If it's a float, chop up into bins
         if np.issubdtype(df[column].dtype, float):
@@ -139,6 +141,8 @@ def binarize(df, n_bins=5):
 
         # If it's categorical or object, do this
         unique_values = data.unique()
+        groupkeys = []
+        z = 0
         for value in unique_values:
             if value is np.nan:
                 continue
@@ -147,22 +151,28 @@ def binarize(df, n_bins=5):
             if not np.any(new_series):
                 continue
 
+            z += 1.0
             new_name = '_{}__{}'.format(column, value)
             df2[new_name] = new_series
             df2[new_name][pd.isnull(data)] = np.nan
+            groupkeys.append(new_name)
 
-    return df2
+        for k in groupkeys:
+            targets[k] = 1./z
+
+    return df2, targets
 
 
 def process_csv(fdesc):
 
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
-    df = binarize(df).reset_index()
+    df, targets = binarize(df)
+    df = df.reset_index()
 
     headers = []
     headers.extend([dict(title=_) for _ in df.columns])
 
-    return df.to_json(orient='values'), headers, len(df)
+    return df.to_json(orient='values'), headers, targets, len(df)
 
 
 def process_table(data, columns, k, pre_selects):

@@ -67,6 +67,9 @@ crossorigin="anonymous"></script>
     <script>
         var raw_data = {{ table |safe }};
         var raw_columns = {{ columns|safe }};
+        var targets = {{ targets|safe }};
+
+        console.log(targets);
         $(document).ready(function() {
             var table = $('#table').DataTable({
                 paging: true,
@@ -85,7 +88,10 @@ crossorigin="anonymous"></script>
                         text: 'Save CSV',
                         exportOptions: { modifier: { selected: true } }
                     },
-                    'selectNone',
+                    {
+                        extend: 'selectNone',
+                        text: 'Reset'
+                    }
                 ],
             });
 
