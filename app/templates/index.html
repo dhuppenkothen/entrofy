@@ -33,6 +33,8 @@
     <li role="presentation"><a href="#about" aria-controls="about" role="tab" data-toggle="tab">About</a></li>
     <li role="presentation"><a href="#instructions" aria-controls="instructions" role="tab" data-toggle="tab">Instructions</a></li>
     <li role="presentation"><a href="#input" aria-controls="input" role="tab" data-toggle="tab">Input</a></li>
+    <li role="presentation"><a href="#contact" aria-controls="contact" role="tab" data-toggle="tab">Contact</a></li>
+    <li role="presentation"><a href="#legal" aria-controls="legal" role="tab" data-toggle="tab">Legal</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -59,14 +61,62 @@ The targets could be based on various objectives that depend on the workshop or 
 Note that this is explicitly not the same as a quota: the underlying algorithim optimizes for the subset of participants that overall matches up with the targets, taking into account all targets simultaneously. It is also possible to include relative weights between targets, depending on how important they are to you.
 </p>
 <p>
-
+<h4>Input</h4>
+</p>
+<p>
+<ul>
+<li>CSV file with candidates, attribute, and values</li>
+<li>Target size of subset </li>
+<li>Target distribution of each value </li>
+<li>Weights assigned to each value </li>
+</ul>
+</p>
+<p><h4>Output</h4></p>
+<p>
+<ul>
+<li>Distribution of each value in input file</li>
+<li>Subset of candidates which approximate the target distributions</li>
+<li>Distribution of each value in subset</li>
+</ul>
 </p>
 
    </div>
    </div>
     <div role="tabpanel" class="tab-pane" id="instructions">
     <div class="left1">
-    Don't mess this up! Seriously. It's not hard!
+    <p>First, collect data about the acceptable participants. This requires you to know which criteria you actually care about when selecting participants. This will very strongly depend on the scope, the objective and format of your workshop or conference.
+</p>
+<p><h4>Input CSV file format</h4>
+</p>
+<p>
+<ul>
+<li>header row required. no spaces in header names.</li>
+<li>first column required to be a unique identifier. Either a unique numerical key (anonymous) or full name.</li>
+<li>each column is intrepreted as an attribute (e.g, gender) </li>
+<li>each field in a column is intrepreted as a value of the attribute</li>
+<li>missing data should be left as empty strings</li>
+</ul>
+</p>
+<p><h4>Interface</h4></p>
+<p>
+<ul>
+<li>to ignore a parameter, set the weight to 0</li>
+<li>pre-selected candidates may be selected (left-click) to ensure their inclusion in the subset</li>
+</ul></p>
+<p><h4>Implementation Suggestions</h4></p>
+<p>
+<ul>
+<li>input list should be all acceptable candidates</li>
+<li>input list should include pre-selected candidates so they are included in the distributions</li>
+</ul>
+</p>
+<p><h4>Things you should know</h4></p>
+<p>
+<ul>
+<li>output list is not necessarily reproducible -- each run will create a new list</li>
+<li>numbers are assumed to be from a continous distribution (e.g., years since PhD)</li>
+<li>quantitative attributes are divided up into at most 5 bins</li>
+</ul>
     </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="input">
@@ -85,6 +135,28 @@ Note that this is explicitly not the same as a quota: the underlying algorithim 
             </form>
 
 </div>
+
+    <div role="tabpanel" class="tab-pane" id="contact">
+    <div class="left1">
+<p>
+The code is freely available on <a href="#">github</a>.
+If you find a bug, it's yours to keep, however, we invite you to open an issue on github or 
+submit a pull request for a patch.
+</p>
+
+You can contact the authors <a href="#">here</a> and <a href="#">here</a>.
+    </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="legal">
+    <div class="left1">
+<p>
+Some legal stuff goes here.
+</p>
+
+    </div>
+    </div>
+
   </div>
 
 </div>
