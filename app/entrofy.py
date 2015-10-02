@@ -173,12 +173,16 @@ def process_csv(fdesc):
 
     df = pd.read_csv(fdesc, skipinitialspace=True, index_col=0)
     df, targets = binarize(df)
+    X = df.values.astype(np.float)
+
+    p_all = {k: v for (k, v) in zip(df.columns, compute_p(X))}
+
     df = df.reset_index()
 
     headers = []
     headers.extend([dict(title=_) for _ in df.columns])
 
-    return df.to_json(orient='values'), headers, targets, len(df)
+    return df.to_json(orient='values'), headers, targets, len(df), p_all
 
 
 def process_table(data, index, columns, k, q, w, pre_selects):

@@ -14,8 +14,7 @@
     </head>
 
     <body class="has-drawer">
-        <div class="drawer dw-xs-10 dw-sm-6 dw-md-4 fold" id="drawerExample" 
-           aria-labelledby="drawerExample">
+        <div class="drawer dw-xs-10 dw-sm-6 dw-md-4 fold" id="drawerExample" aria-labelledby="drawerExample">
             <div class="drawer-controls">
                 <a href="#drawerExample"
                     data-toggle="drawer" 
@@ -36,6 +35,27 @@
             </div>
         </div>
 
+        <!--
+        <div class="drawer drawer-right dw-xs-10 dw-sm-6 dw-md-4 fold" id="drawerCharts"
+            aria-labelledby="drawerCharts">
+            <div class="drawer-controls">
+                <a href="#drawerCharts"
+                    data-toggle="drawer" 
+                    aria-foldedopen="false" 
+                    aria-controls="drawerCharts" 
+                    class="btn btn-primary btn-sm glyphicon
+                    glyphicon-object-align-left"><span class="sr-only">Distributions</span></a>
+            </div>
+            <div class="drawer-contents">
+                <div class="drawer-heading">
+                    <h2 class="drawer-title"> Distributions </h2>
+                </div>
+                <div class="drawer-body" id="charts">
+                </div>
+            </div>
+        </div>
+-->
+
         <div class="container">
             <div class="col-md-2 from-group">
                 <!-- EVERYTHING GOES HERE -->
@@ -50,6 +70,10 @@
             <div class="col-md-10">
                 <table id="table" class="table table-striped table-bordered"
                     style="white-space: nowrap"></table>
+            </div>
+
+            <div class="col-md-10" id="charts">
+                <canvas width="600" height="300" id="canvas"></canvas>
             </div>
         </div>
 
@@ -76,6 +100,8 @@ crossorigin="anonymous"></script>
 crossorigin="anonymous"></script>
     <script src="/static/js/dataTables.select.js"></script>
     <script src="/static/js/drawer.js"></script>
+    <script src="/static/js/Chart.js"></script>
+
     <script src="//cdn.datatables.net/fixedcolumns/3.1.0/js/dataTables.fixedColumns.min.js"
 crossorigin="anonymous"></script>
 
@@ -87,17 +113,19 @@ crossorigin="anonymous"></script>
     <script>
         var raw_data = {{ table |safe }};
         var raw_columns = {{ columns|safe }};
+
         var targets = {{ targets|safe }};
+        var raw_stats = {{ raw_stats|safe }};
 
         $(document).ready(function() {
             // build the advanced controls
 
             var controls = $('#controls');
+            var charts = $('#charts');
+
             var columns = raw_columns.slice(1).map(function(x) { return x.title; });
 
             columns.map(function(c) {
-                // Construct an input group for this column
-
                 // Create a new form group
                 var div = $('<div>').appendTo(controls);
                 div.addClass('form-group');
@@ -134,15 +162,58 @@ crossorigin="anonymous"></script>
                                 .attr('for', c)
                                 .append(c);
 
-                var cdiv = $('<div>').addClass('col-sm-3');
-
                 div.append(label);
+
+                var cdiv = $('<div>').addClass('col-sm-3');
                 cdiv.append(t_input);
                 div.append(cdiv);
+
                 var cdiv2 = $('<div>').addClass('col-sm-3');
                 cdiv2.append(w_input);
                 div.append(cdiv2);
+
             });
+
+            // Create a new Chart
+            var ctx = $('#canvas').get(0).getContext('2d');
+
+            // What's the data?
+            var chart_data = {
+                labels: columns,
+                datasets: [],
+            };
+
+            chart_data.datasets.push({
+                label: 'Raw statistics',
+                fillColor: 'blue',
+                strokeColor: 'blue',
+                highlightFill: 'blue',
+                highlightStroke: 'blue',
+                data: raw_columns.slice(1).map(function(x) { return raw_stats[x.title]; })
+            });
+
+            chart_data.datasets.push({
+                label: 'Target statistics',
+                fillColor: 'red',
+                strokeColor: 'red',
+                highlightFill: 'red',
+                highlightStroke: 'red',
+                data: raw_columns.slice(1).map(function(x) { return targets[x.title]; })
+            });
+
+            chart_data.datasets.push({
+                label: 'Selected',
+                fillColor: 'green',
+                strokeColor: 'green',
+                highlightFill: 'green',
+                highlightStroke: 'green',
+                data: raw_columns.slice(1).map(function(x) { return 0.0; })
+            });
+
+            console.log(chart_data);
+
+            var chart = new Chart(ctx, chart_data);
+
 
             $(".target").slider({formatter: function(v) {
                     return 'Target proportion: ' + v;

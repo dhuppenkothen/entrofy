@@ -62,13 +62,14 @@ def process():
 
     fdesc = request.files['csv']
 
-    table, columns, targets, n = entrofy.process_csv(fdesc)
+    table, columns, targets, n, raw_stats = entrofy.process_csv(fdesc)
 
     return render_template('process.html',
                            table=table,
                            columns=json.dumps(columns),
                            kmax=n,
-                           targets=json.dumps(targets))
+                           targets=json.dumps(targets),
+                           raw_stats=json.dumps(raw_stats))
 
 
 @app.route('/')
