@@ -9,7 +9,7 @@ import ConfigParser
 import os
 import re
 import sys
-import ujson as json
+import json
 import entrofy
 
 DEBUG = True

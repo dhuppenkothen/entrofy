@@ -2,5 +2,5 @@ argparse
 numpy
 pandas
 flask
-ujson
+json
 ConfigParser
