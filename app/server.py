@@ -52,7 +52,7 @@ def sample():
                                  data['weights'],
                                  pre_selects)
 
-    return json.encode(dict(selections=list(rows),
+    return json.dumps(dict(selections=list(rows),
                             p_all=list(p_all),
                             p_selected=list(p_selected)))
 
