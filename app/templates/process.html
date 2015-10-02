@@ -47,7 +47,7 @@
                     </button>
             </div>
 
-            <div class="container col-md-10">
+            <div class="col-md-10">
                 <table id="table" class="table table-striped table-bordered"
                     style="white-space: nowrap"></table>
             </div>
@@ -130,7 +130,7 @@ crossorigin="anonymous"></script>
                                 .attr('type', "text")
                                 .attr('data-slider-min', 0)
                                 .attr('data-slider-max', 10)
-                                .attr('data-slider-step', 2)
+                                .attr('data-slider-step', 1)
                                 .attr('maxlength', 4)
                                 .attr('size', 4)
                                 .addClass('form-control')
@@ -149,8 +149,10 @@ crossorigin="anonymous"></script>
 
                 div.append(label);
                 cdiv.append(t_input);
-                cdiv.append(w_input);
                 div.append(cdiv);
+                var cdiv2 = $('<div>').addClass('col-sm-3');
+                cdiv2.append(w_input);
+                div.append(cdiv2);
             });
 
             $(".target").slider({formatter: function(v) {
