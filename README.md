@@ -22,6 +22,8 @@ Attributes and values are user determined and based on the data present in uploa
 
 ## Install Instructions
 
+Download the app/ directory
+
 ```
 pip install -r requirements.txt
 python server.py
@@ -31,7 +33,7 @@ then go to http://localhost:5000/ in your web browser
 ## Usage Instructions
 ### Input CSV file format
 
-- header row required
+- header row required. 
 - first column required to be a unique identifier. Either a unique numerical kep (anonymous) or full name.
 - each column is intrepreted as an attribute (e.g, gender) 
 - each field in a column is intrepreted as a value of the attribute
