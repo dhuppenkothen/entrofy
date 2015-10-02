@@ -114,7 +114,7 @@ crossorigin="anonymous"></script>
                                 .attr('id', c)
                                 .attr('data-slider-id', c)
                                 .attr('data-slider-value', targets[c] * 1.0);
-                //t_input.slider({});
+                /*
                 var w_input = $('<input>')
                                 .attr('type', "number")
                                 .attr('min', 0)
@@ -125,6 +125,19 @@ crossorigin="anonymous"></script>
                                 .addClass('weight')
                                 .attr('id', c)
                                 .val(1);
+                */
+                var w_input = $('<input>')
+                                .attr('type', "text")
+                                .attr('data-slider-min', 0)
+                                .attr('data-slider-max', 10)
+                                .attr('data-slider-step', 2)
+                                .attr('maxlength', 4)
+                                .attr('size', 4)
+                                .addClass('form-control')
+                                .addClass('weight')
+                                .attr('id', c)
+                                .attr('data-slider-id', c)
+                                .attr('data-slider-value', 1);
 
                 var label = $('<label>')
                                 .addClass('control-label')
@@ -140,7 +153,14 @@ crossorigin="anonymous"></script>
                 div.append(cdiv);
             });
 
-            $(".target").slider();
+            $(".target").slider({formatter: function(v) {
+                    return 'Target proportion: ' + v;
+                }
+            });
+            $(".weight").slider({formatter: function(v) {
+                    return 'Importance: ' + v;
+                }
+            });
 
             // build the table
             var table = $('#table').DataTable({
