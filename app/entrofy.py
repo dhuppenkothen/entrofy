@@ -126,7 +126,8 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01, n_samples=15)
     if pre_selects is not None and len(pre_selects):
         n_samples = 1
 
-    results = [__entrofy(X, k, w=w, q=q, pre_selects=pre_selects)
+    results = [__entrofy(X, k, w=w, q=q, pre_selects=pre_selects,
+                         quantile=quantile)
                for _ in range(n_samples)]
 
     max_score, best = results[0]
