@@ -188,12 +188,9 @@ class ContinuousMapper(object):
             assert self.n_out == len(boundaries)-1,  ("The boundaries must "
                                                       "equal the number of "
                                                       "columns plus one.")
-            # make the actual histogram
-
         else:
             self.boundaries = np.linspace(minval, maxval, n_out+1)
 
-        #_, bin_edges = np.histogram(df, bins=self.boundaries, density=False)
 
         # make sure list of column names matches the number of columns
         if column_names is not None:

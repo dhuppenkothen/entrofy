@@ -5,7 +5,6 @@ import pandas as pd
 
 from entrofy.mappers import map_boundaries, ContinuousMapper
 
-
 class TestContinuousMapper(object):
 
     def setUp(self):
@@ -86,7 +85,6 @@ class TestContinuousMapper(object):
         for i in range(5):
             c = ContinuousMapper(self.df, n_out=i+1)
             #assert np.allclose(c.targets, 1./(i+1))
-
 
 
 class TestMapBoundaries(object):
