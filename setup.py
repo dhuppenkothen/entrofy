@@ -28,7 +28,7 @@ setup(
     license='ISC',
     install_requires=[
         'pandas>=0.16',
-        'nump>=1.10'
+        'numpy>=1.10'
     ],
     extras_require={
         'docs': ['numpydoc']
