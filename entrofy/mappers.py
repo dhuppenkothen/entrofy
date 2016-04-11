@@ -4,7 +4,7 @@
 
 import pandas as pd
 
-__all__ = ['StringMapper']
+__all__ = ['ObjectMapper', 'BaseMapper']
 
 def equal_maker(value):
     '''Second-order function to make an equivalence comparator
@@ -22,7 +22,26 @@ def equal_maker(value):
     return lambda x: x == value
 
 
-class StringMapper(object):
+class BaseMapper(object):
+
+    def __init__(self):
+        pass
+
+    def transform(self, column):
+        df = pd.DataFrame(index=column.index,
+                          columns=sorted(list(self.targets.keys())),
+                          dtype=float)
+
+        nonnulls = ~column.isnull()
+
+        for key in self._map:
+            df[key][nonnulls] = column[nonnulls].apply(self._map[key])
+            df[key][~nonnulls] = None
+
+        return df
+
+
+class ObjectMapper(BaseMapper):
 
     def __init__(self, column, prefix='', n_out=None, targets=None):
 
@@ -48,10 +67,3 @@ class StringMapper(object):
                 self.targets[key] = target_prob
                 self._map[key] = equal_maker(val)
 
-    def transform(self, column):
-        df = pd.DataFrame(index=column.index, columns=sorted(list(self.targets.keys())), dtype=float)
-        nonnulls = ~column.isnull()
-        for key in self._map:
-            df[key][nonnulls] = column[nonnulls].apply(self._map[key])
-            df[key][~nonnulls] = None
-        return df
