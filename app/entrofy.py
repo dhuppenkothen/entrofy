@@ -18,7 +18,7 @@ def obj(p, w, q):
     return - entropy.dot(w)
 
 
-def __entrofy(X, k, w=None, q=None, pre_selects=None):
+def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
     '''See entrofy() for documentation'''
 
     n_participants, n_attributes = X.shape
@@ -72,15 +72,16 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None):
         delta[y] = -np.inf
 
         # Select the top score.  Break near-ties randomly.
-        target_score = delta.max()
-        target_score = target_score - 1e-3 * np.abs(target_score)
+        delta_real = delta[np.isfinite(delta)]
+        target_score = np.percentile(delta_real, 1.0-quantile)
+
         new_idx = np.random.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
     return obj(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
 
 
-def entrofy(X, k, w=None, q=None, pre_selects=None, n_samples=15):
+def entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01, n_samples=15):
     '''Entrofy your panel.
 
     Parameters
@@ -103,6 +104,11 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, n_samples=15):
     pre_selects : None or iterable
         Optionally, you may pre-specify a set of rows to be forced into the solution.
 
+    quantile : float, values in [0,1]
+        Define the quantile to be used in tie-breaking between top choices at 
+        every step; choose e.g. 0.01 for the top 1% quantile
+        By default, 0.01
+
     n_samples : int > 0
         If pre_selects is None, run `n_samples` random initializations and return
         the solution with the best objective value.
@@ -120,7 +126,8 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, n_samples=15):
     if pre_selects is not None and len(pre_selects):
         n_samples = 1
 
-    results = [__entrofy(X, k, w=w, q=q, pre_selects=pre_selects)
+    results = [__entrofy(X, k, w=w, q=q, pre_selects=pre_selects,
+                         quantile=quantile)
                for _ in range(n_samples)]
 
     max_score, best = results[0]
