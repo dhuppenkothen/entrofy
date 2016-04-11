@@ -84,8 +84,20 @@ class TestContinuousMapper(object):
     def test_default_targets(self):
         for i in range(5):
             c = ContinuousMapper(self.df, n_out=i+1)
-            #assert np.allclose(c.targets, 1./(i+1))
+            assert np.isclose(c.targets[c.targets.keys()[i]], 1./(i+1))
 
+    def test_map_works_correctly(self):
+        n_out = 1
+        boundaries = [self.bmin+2, self.bmax-2]
+        c = ContinuousMapper(self.df, n_out=n_out, boundaries=boundaries)
+        cname = "{:2f}_{:2f}".format(boundaries[0], boundaries[1])
+        m = c._map[cname]
+        test_val = boundaries[0] + np.diff(boundaries)/2.0
+        assert m(test_val) == True
+        test_val = self.bmin
+        assert m(test_val) == False
+        test_val = self.bmax
+        assert m(test_val) == False
 
 class TestMapBoundaries(object):
 
@@ -119,3 +131,4 @@ class TestMapBoundaries(object):
         assert  b1(self.bmax) == False
         b2 = map_boundaries(self.bmin, self.bmax, last=True)
         assert b2(self.bmax) == True
+
