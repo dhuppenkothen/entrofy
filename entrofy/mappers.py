@@ -5,7 +5,7 @@
 import numpy as np
 import pandas as pd
 
-__all__ = ['ObjectMapper', 'BaseMapper']
+__all__ = ['ObjectMapper', 'BaseMapper', 'ContinuousMapper']
 
 def equal_maker(value):
     '''Second-order function to make an equivalence comparator
@@ -142,3 +142,101 @@ class ObjectMapper(BaseMapper):
                 self.targets[key] = target_prob
                 self._map[key] = equal_maker(val)
 
+
+class ContinuousMapper(object):
+    """
+    Map continuous values into a set of discrete bins.
+
+    """
+
+    def __init__(self, df, n_out=2, boundaries=None, targets=None,
+                 column_names=None, prefix=""):
+        """
+        This class maps continuous values into a set of `n_out` discrete bins.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            A DataFrame with a single column containing the relevant data
+
+        n_out: int, optional, default: 1
+            The number of discrete bins to use
+
+        boundaries: iterable, optional
+            If `boundaries` is set to a list of lower and upper bin edges,
+            then these edges will be used. Must be of len(boundaries) == n_out+1
+            If `None`, the data will be split up into `n_out` equal-sized bins
+
+        column_names: iterable, optional
+            An optional list of strings with the names for the individual
+            columns created in this class. Must be of length `n_out`. If None,
+            the values of the ranges will be used.
+
+        prefix: string, optional
+            A prefix string to go in front of the `column_names`
+
+        """
+
+        self.n_out = n_out
+        self.prefix = prefix
+
+        if boundaries is not None:
+            # if the boundaries are given, just use these
+            self.boundaries = boundaries
+            assert self.n_out == len(boundaries)-1,  ("The boundaries must "
+                                                      "equal the number of "
+                                                      "columns plus one.")
+            # make the actual histogram
+            _, bin_edges = np.histogram(df, bins=self.boundaries, density=False)
+
+        else:
+            _, bin_edges = np.histogram(df, bins=self.n_out, density=False)
+            self.boundaries = bin_edges
+
+
+        # make sure list of column names matches the number of columns
+        if column_names is not None:
+            assert self.n_out == len(column_names),  ("The list of column names"
+                                                      " must equal n_out.")
+
+        print(bin_edges)
+        print(self.boundaries)
+
+        # check whether bin edges and boundaries are equal
+        assert np.all(bin_edges == self.boundaries), ("bin edges should equal "
+                                                      "bondaries?")
+
+        # empty target dictionary
+        self.targets = {}
+        self._map = {}
+
+        default_target = 1./self.n_out
+
+        if n_out == 1:
+            if column_names is None:
+                cname =  self.prefix + str(self.boundaries[0]) + "_" + \
+                         str(self.boundaries[1])
+            else:
+                cname = column_names[0]
+
+            self.targets[cname] = 1.0
+            self._map[cname] = map_boundaries(self.boundaries[0],
+                                              self.boundaries[1], last=True)
+
+        else:
+            for i in range(n_out):
+                if column_names is None:
+                    cname = self.prefix + str(self.boundaries[i]) + "_" + \
+                            str(self.boundaries[i+1])
+                else:
+                    cname = column_names[i]
+
+                self.targets[cname] = default_target
+                if i == n_out-1:
+                    last = True
+                else:
+                    last = False
+                self._map[cname] = map_boundaries(bin_edges[i],
+                                                  bin_edges[i+1], last)
+
+        return
