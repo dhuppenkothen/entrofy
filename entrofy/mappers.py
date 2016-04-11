@@ -57,7 +57,6 @@ def map_boundaries(bmin, bmax, last=False):
         return lambda x: bmin <= x < bmax
 
 
-
 class BaseMapper(object):
     '''A generic base class for mapper objects'''
     def __init__(self):
@@ -180,6 +179,9 @@ class ContinuousMapper(object):
         self.n_out = n_out
         self.prefix = prefix
 
+        minval = np.nanmin(np.array(df))
+        maxval = np.nanmax(np.array(df))
+
         if boundaries is not None:
             # if the boundaries are given, just use these
             self.boundaries = boundaries
@@ -187,24 +189,23 @@ class ContinuousMapper(object):
                                                       "equal the number of "
                                                       "columns plus one.")
             # make the actual histogram
-            _, bin_edges = np.histogram(df, bins=self.boundaries, density=False)
 
         else:
-            _, bin_edges = np.histogram(df, bins=self.n_out, density=False)
-            self.boundaries = bin_edges
+            self.boundaries = np.linspace(minval, maxval, n_out+1)
 
+        #_, bin_edges = np.histogram(df, bins=self.boundaries, density=False)
 
         # make sure list of column names matches the number of columns
         if column_names is not None:
             assert self.n_out == len(column_names),  ("The list of column names"
                                                       " must equal n_out.")
 
-        print(bin_edges)
+        #print(bin_edges)
         print(self.boundaries)
 
         # check whether bin edges and boundaries are equal
-        assert np.all(bin_edges == self.boundaries), ("bin edges should equal "
-                                                      "bondaries?")
+        #assert np.all(bin_edges == self.boundaries), ("bin edges should equal "
+        #                                              "boundaries?")
 
         # empty target dictionary
         self.targets = {}
@@ -214,8 +215,9 @@ class ContinuousMapper(object):
 
         if n_out == 1:
             if column_names is None:
-                cname =  self.prefix + str(self.boundaries[0]) + "_" + \
-                         str(self.boundaries[1])
+                cname =  self.prefix + self.prefix + \
+                            "{:2f}_{:2f}".format(self.boundaries[0],
+                                                 self.boundaries[1])
             else:
                 cname = column_names[0]
 
@@ -226,8 +228,9 @@ class ContinuousMapper(object):
         else:
             for i in range(n_out):
                 if column_names is None:
-                    cname = self.prefix + str(self.boundaries[i]) + "_" + \
-                            str(self.boundaries[i+1])
+                    cname = self.prefix + \
+                            "{:2f}_{:2f}".format(self.boundaries[i],
+                                                 self.boundaries[i+1])
                 else:
                     cname = column_names[i]
 
@@ -236,7 +239,7 @@ class ContinuousMapper(object):
                     last = True
                 else:
                     last = False
-                self._map[cname] = map_boundaries(bin_edges[i],
-                                                  bin_edges[i+1], last)
+                self._map[cname] = map_boundaries(self.boundaries[i],
+                                                  self.boundaries[i+1], last)
 
         return
