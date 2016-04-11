@@ -142,7 +142,7 @@ class ObjectMapper(BaseMapper):
                 self._map[key] = equal_maker(val)
 
 
-class ContinuousMapper(object):
+class ContinuousMapper(BaseMapper):
     """
     Map continuous values into a set of discrete bins.
 
