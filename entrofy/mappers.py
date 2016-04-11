@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 '''Column mapper object definitions'''
 
+import numpy as np
 import pandas as pd
 
 __all__ = ['StringMapper']
@@ -20,6 +21,41 @@ def equal_maker(value):
         comp(x) returns `True` iff `x == value`
     '''
     return lambda x: x == value
+
+def map_boundaries(bmin, bmax, last=False):
+    """
+    Map a continuous value `x` to lie within a
+    range [`bmin`, `bmax`).
+    By default, the range *excludes* `bmax`.
+    If `last` is `True`, then `bmax` will be included
+    in the range.
+
+    Parameters
+    ----------
+    bmin : float
+        lower edge of the range
+
+    bmax: float
+        upper edge of the range
+
+    last : bool, optional, default: False
+        if True, then `bmax` is included in the range
+
+    Returns
+    -------
+    lambda x: bool
+        A lambda function that returns `True` if `x` lies between
+        `bmin` and `bmax` or `False` otherwise.
+
+    """
+    assert np.isfinite(bmin), "bmin must be finite."
+    assert np.isfinite(bmax), "bmax must be finite."
+
+    if last:
+        return lambda x: bmin <= x <= bmax
+    else:
+        return lambda x: bmin <= x < bmax
+
 
 
 class StringMapper(object):
