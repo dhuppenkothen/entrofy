@@ -4,6 +4,7 @@
 
 import numpy as np
 import pandas as pd
+import six
 
 from .mappers import ContinuousMapper, ObjectMapper
 
@@ -62,7 +63,8 @@ def entrofy(dataframe, n,
 
     '''
     # Drop the opt-outs
-    dataframe = dataframe[~dataframe.index.isin(opt_outs)]
+    if opt_outs is not None:
+        dataframe = dataframe[~dataframe.index.isin(opt_outs)]
 
     # Build a dummy mappers array
     if mappers is None:
@@ -80,26 +82,25 @@ def entrofy(dataframe, n,
         weights = {key: 1.0 for key in dataframe.columns}
 
     # Compute binary array from the dataframe
+    # Build a mapping of columns to probabilities and weights
     df_binary = pd.DataFrame(index=dataframe.index)
-    for key, mapper in mappers:
-        df_binary = df_binary.join(mapper.transform(dataframe[key]))
-
-
-    # Build a mapping of columns to probabilities
+    all_weights = {}
     all_probabilities = {}
-    for _ in mappers.itervalues():
-        all_probabilities.update(_.targets)
+    for key, mapper in six.iteritems(mappers):
+        if key not in weights:
+            continue
+        new_df = mapper.transform(dataframe[key])
+        df_binary = df_binary.join(new_df)
+        all_weights.update({k: weights[key] for k in new_df.columns})
+        all_probabilities.update(mapper.targets)
 
     # Construct the target probability vector and weight vector
     target_prob = np.empty(len(df_binary.columns))
     target_weight = np.empty_like(target_prob)
+
     for i, key in enumerate(df_binary.columns):
         target_prob[i] = all_probabilities[key]
-        target_weight[i] = weights[key]
-
-    # Pre-selects eliminate random trials?
-    if pre_selects is not None and len(pre_selects):
-        n_trials = 1
+        target_weight[i] = all_weights[key]
 
     # Run the specified number of randomized trials
     results = [__entrofy(df_binary.values, n,
@@ -108,7 +109,6 @@ def entrofy(dataframe, n,
                          pre_selects=pre_selects,
                          quantile=quantile)
                for _ in range(n_trials)]
-
 
     # Select the trial with the best score
     max_score, best = results[0]
