@@ -62,13 +62,12 @@ def entrofy(dataframe, n,
 
     '''
     # Drop the opt-outs
-
     dataframe = dataframe[~dataframe.index.isin(opt_outs)]
 
     # Build a dummy mappers array
     if mappers is None:
         mappers = {}
-        for key in dataframe.columns():
+        for key in dataframe.columns:
             # If floating point, use a range mapper
             # Else: use an object mapper
             if np.issubdtype(dataframe[key].dtype, np.float):
@@ -76,6 +75,9 @@ def entrofy(dataframe, n,
             else:
                 mappers[key] = ObjectMapper(dataframe[key])
 
+    # Do we have weights?
+    if weights is None:
+        weights = {key: 1.0 for key in dataframe.columns}
 
     # Compute binary array from the dataframe
     df_binary = pd.DataFrame(index=dataframe.index)
@@ -88,10 +90,12 @@ def entrofy(dataframe, n,
     for _ in mappers.itervalues():
         all_probabilities.update(_.targets)
 
-    # Construct the target probability vector
+    # Construct the target probability vector and weight vector
     target_prob = np.empty(len(df_binary.columns))
+    target_weight = np.empty_like(target_prob)
     for i, key in enumerate(df_binary.columns):
         target_prob[i] = all_probabilities[key]
+        target_weight[i] = weights[key]
 
     # Pre-selects eliminate random trials?
     if pre_selects is not None and len(pre_selects):
@@ -99,7 +103,7 @@ def entrofy(dataframe, n,
 
     # Run the specified number of randomized trials
     results = [__entrofy(df_binary.values, n,
-                         w=weights,
+                         w=target_weight,
                          q=target_prob,
                          pre_selects=pre_selects,
                          quantile=quantile)
