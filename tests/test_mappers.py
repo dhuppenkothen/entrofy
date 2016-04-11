@@ -5,41 +5,46 @@ import pandas as pd
 
 from mappers import map_boundaries
 
+
 class TestContinuousMapper(object):
 
-   def setUp(self):
-      age = np.random.poisson(30, size=300)
-      self.df = pd.DataFrame(age, columns="age")
-      # add some NaN values to the data set
-      for i in np.random.randint(0, len(df.index),size=10):
-          self.df["age"][i] = np.nan
+    def setUp(self):
+        np.random.seed(20160411)
+
+        age = np.random.poisson(30, size=300)
+
+        self.df = pd.DataFrame(age, columns="age")
+        # add some NaN values to the data set
+        for i in np.random.randint(0, len(df.index),size=10):
+            self.df["age"][i] = np.nan
 
 
+    def test_runs_with_default_values(self):
+        c = 
 
 class TestMapBoundaries(object):
 
-   def setUp(self):
-      self.bmin = 2.0
-      self.bmax = 10.0
-      self.b = map_boundaries(self.bmin, self.bmax)
+    def setUp(self):
+        self.bmin = 2.0
+        self.bmax = 10.0
+        self.b = map_boundaries(self.bmin, self.bmax)
 
-   def test_map_boundaries_works(self):
-      map_boundaries(self.bmin, self.bmax)
+    def test_map_boundaries_works(self):
+        map_boundaries(self.bmin, self.bmax)
 
-   @raises(AssertionError)
-   def test_map_boundaries_finite(self):
-      bmin = np.nan
-      map_boundaries(bmin, self.bmax)
+    @raises(AssertionError)
+    def test_map_boundaries_finite(self):
+        bmin = np.nan
+        map_boundaries(bmin, self.bmax)
 
-   def test_map_boundaries_returns_true_for_correct_value(self):
-      assert self.b(3.0) == True
+    def test_map_boundaries_returns_true_for_correct_value(self):
+        assert self.b(3.0) == True
 
-   def test_map_boundaries_returns_false_for_incorrect_value(self):
-      assert self.b(12.0) == False
+    def test_map_boundaries_returns_false_for_incorrect_value(self):
+        assert self.b(12.0) == False
 
-   def test_functionality_of_keyword_last(self):
-      b1 = map_boundaries(self.bmin, self.bmax, last=False)
-      assert  b1(self.bmax) == False
-      b2 = map_boundaries(self.bmin, self.bmax, last=True)
-      assert b2(self.bmax) == True
-
+    def test_functionality_of_keyword_last(self):
+        b1 = map_boundaries(self.bmin, self.bmax, last=False)
+        assert  b1(self.bmax) == False
+        b2 = map_boundaries(self.bmin, self.bmax, last=True)
+        assert b2(self.bmax) == True
