@@ -5,6 +5,7 @@
 import numpy as np
 import pandas as pd
 import six
+import warnings
 
 from .mappers import ContinuousMapper, ObjectMapper
 
@@ -158,10 +159,14 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
             break
 
         # Initialize the distribution vector
-        if np.any(y):
+        # We suppress empty-slice warnings here:
+        #   even if y is non-empty, some column of X[y] may be all nans
+        #   in this case, the index set (y and not-nan) becomes empty.
+        # It's easier to just ignore this warning here and recover below
+        # than to prevent it by slicing out each column independently.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=RuntimeWarning)
             p = np.nanmean(X[y], axis=0)
-        else:
-            p = np.zeros(X.shape[1])
 
         p[np.isnan(p)] = 0.0
 
@@ -187,11 +192,8 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
     return __objective(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
 
 
-def __objective(p, w, q):
+def __objective(p, w, q, amin=1e-200):
     # Prevent numerical underflow in log
-
-    amin = 1e-200
-
     pbar = 1. - p
     qbar = 1. - q
 
