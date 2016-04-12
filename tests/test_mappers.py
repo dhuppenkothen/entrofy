@@ -1,9 +1,9 @@
 import numpy as np
 
-from nose.tools import raises
+from nose.tools import raises, eq_
 import pandas as pd
 
-from entrofy.mappers import map_boundaries, ContinuousMapper
+from entrofy.mappers import map_boundaries, ContinuousMapper, ObjectMapper
 
 class TestContinuousMapper(object):
 
@@ -131,4 +131,67 @@ class TestMapBoundaries(object):
         assert  b1(self.bmax) == False
         b2 = map_boundaries(self.bmin, self.bmax, last=True)
         assert b2(self.bmax) == True
+
+class TestObjectMapper(object):
+
+    def setUp(self):
+        np.random.seed(20160411)
+
+        self.species = ['orc', 'elf', 'dwarf', 'hobbit', 'human']
+        self.probs = [0.5, 0.25, 0.125, 0.0625, 0.0625]
+        values = np.random.choice(self.species, size=300, p=self.probs)
+
+        self.df = pd.DataFrame(values, columns=["species"], dtype=str)
+        # add some NaN values to the data set
+        for i in np.random.randint(0, len(self.df.index), size=10):
+            self.df["species"][i] = None
+
+
+    def test_runs_with_default_values(self):
+        ObjectMapper(self.df['species'])
+
+    def test_number_of_targets_set_correctly_by_default(self):
+        c = ObjectMapper(self.df['species'])
+        eq_(len(c.targets), 5)
+
+    def test_number_of_targets_get_set_correctly_by_user(self):
+        n_out = 3
+        c = ObjectMapper(self.df['species'], n_out=n_out)
+        eq_(len(c.targets), n_out)
+
+    def test_most_frequent_targets_selected(self):
+        n_out = 3
+        c = ObjectMapper(self.df['species'], n_out=n_out)
+        eq_(set(c.targets.keys()), set(self.species[:n_out]))
+
+
+    def test_prefix_set_correctly(self):
+        c = ObjectMapper(self.df['species'], prefix="test_")
+        cname = set(["test_{:s}".format(s) for s in self.species])
+
+        for key in c.targets:
+            assert key in cname
+
+    def test_prefab_targets(self):
+        targets = dict(orc=0.75, human=0.25)
+        c = ObjectMapper(self.df['species'], targets=targets)
+        eq_(c.targets, targets)
+
+    def test_map_works_correctly(self):
+        c = ObjectMapper(self.df['species'])
+
+        df_out = c.transform(self.df['species'])
+        # First, check that the keys are equal
+        eq_(set(df_out.columns), set(c.targets.keys()))
+
+        # Check that the right columns match up
+
+        # Get the nans
+        nans = self.df['species'].isnull()
+        for col in df_out.columns:
+            series = df_out[col].apply(lambda x: x == 1.0)
+            assert not np.any(series.loc[nans])
+
+            # Slice out just the true values
+            assert np.all(self.df['species'].loc[series].apply(lambda x: x == col))
 
