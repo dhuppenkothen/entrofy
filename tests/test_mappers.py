@@ -21,26 +21,26 @@ class TestContinuousMapper(object):
         self.bmax = np.nanmax(np.array(self.df))
 
     def test_runs_with_default_values(self):
-        ContinuousMapper(self.df)
+        ContinuousMapper(self.df["age"])
 
     def test_number_of_boundaries_set_correctly_by_default(self):
-        c = ContinuousMapper(self.df)
+        c = ContinuousMapper(self.df["age"])
         assert len(c.boundaries) == 3
 
     def test_boundaries_get_set_correctly_by_default(self):
-        c = ContinuousMapper(self.df)
+        c = ContinuousMapper(self.df["age"])
         db = self.bmax - self.bmin
         test_boundaries = [self.bmin, self.bmin+0.5*db, self.bmax]
         assert np.allclose(c.boundaries, test_boundaries)
 
     def test_number_of_boundaries_get_set_correctly_by_user(self):
         n_out = 3
-        c = ContinuousMapper(self.df, n_out=n_out)
+        c = ContinuousMapper(self.df["age"], n_out=n_out)
         assert len(c.boundaries) == n_out + 1
 
     def test_boundaries_get_set_correctly_by_user(self):
         n_out = 3
-        c = ContinuousMapper(self.df, n_out=n_out)
+        c = ContinuousMapper(self.df["age"], n_out=n_out)
         db = self.bmax - self.bmin
         test_boundaries = [self.bmin, self.bmin+db/3., self.bmin+2.*db/3.,
                            self.bmax]
@@ -49,7 +49,7 @@ class TestContinuousMapper(object):
     def test_user_boundaries_get_set_correctly_when_n_out_is_one(self):
         n_out = 1
         test_boundaries = [self.bmin + 10.0, self.bmax - 5.0]
-        c = ContinuousMapper(self.df, n_out, boundaries=test_boundaries)
+        c = ContinuousMapper(self.df["age"], n_out, boundaries=test_boundaries)
         assert np.allclose(c.boundaries, test_boundaries)
 
     def test_keys_set_correctly(self):
@@ -57,7 +57,8 @@ class TestContinuousMapper(object):
         test_boundaries = [self.bmin+i*(self.bmax-self.bmin)/n_out for i
                            in range(n_out+1)]
 
-        c = ContinuousMapper(self.df, n_out=n_out, boundaries=test_boundaries)
+        c = ContinuousMapper(self.df["age"], n_out=n_out,
+                             boundaries=test_boundaries)
         print(c.targets.keys())
         cname = ["{:2f}_{:2f}".format(test_boundaries[i], test_boundaries[i+1])
                  for i in range(n_out)]
@@ -70,7 +71,7 @@ class TestContinuousMapper(object):
         test_boundaries = [self.bmin+i*(self.bmax-self.bmin)/n_out for i
                            in range(n_out+1)]
 
-        c = ContinuousMapper(self.df, n_out=n_out, boundaries=test_boundaries,
+        c = ContinuousMapper(self.df["age"], n_out=n_out, boundaries=test_boundaries,
                              prefix="test_")
         print(c.targets.keys())
         cname = ["test_{:2f}_{:2f}".format(test_boundaries[i],
@@ -83,13 +84,13 @@ class TestContinuousMapper(object):
 
     def test_default_targets(self):
         for i in range(5):
-            c = ContinuousMapper(self.df, n_out=i+1)
+            c = ContinuousMapper(self.df["age"], n_out=i+1)
             assert np.isclose(c.targets[c.targets.keys()[i]], 1./(i+1))
 
     def test_map_works_correctly(self):
         n_out = 1
         boundaries = [self.bmin+2, self.bmax-2]
-        c = ContinuousMapper(self.df, n_out=n_out, boundaries=boundaries)
+        c = ContinuousMapper(self.df["age"], n_out=n_out, boundaries=boundaries)
         cname = "{:2f}_{:2f}".format(boundaries[0], boundaries[1])
         m = c._map[cname]
         test_val = boundaries[0] + np.diff(boundaries)/2.0

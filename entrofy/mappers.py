@@ -148,15 +148,15 @@ class ContinuousMapper(BaseMapper):
 
     """
 
-    def __init__(self, df, n_out=2, boundaries=None, targets=None,
+    def __init__(self, column, n_out=2, boundaries=None, targets=None,
                  column_names=None, prefix=""):
         """
         This class maps continuous values into a set of `n_out` discrete bins.
 
         Parameters
         ----------
-        df : pandas.DataFrame
-            A DataFrame with a single column containing the relevant data
+        df : pandas.Series
+            A Series with a single column containing the relevant data
 
         n_out: int, optional, default: 1
             The number of discrete bins to use
@@ -179,8 +179,8 @@ class ContinuousMapper(BaseMapper):
         self.n_out = n_out
         self.prefix = prefix
 
-        minval = np.nanmin(np.array(df))
-        maxval = np.nanmax(np.array(df))
+        minval = column.min()
+        maxval = column.max()
 
         if boundaries is not None:
             # if the boundaries are given, just use these
