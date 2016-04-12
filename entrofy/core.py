@@ -67,20 +67,25 @@ def entrofy(dataframe, n,
     if opt_outs is not None:
         dataframe = dataframe[~dataframe.index.isin(opt_outs)]
 
-    # Build a dummy mappers array
-    if mappers is None:
-        mappers = {}
-        for key in dataframe.columns:
-            # If floating point, use a range mapper
-            # Else: use an object mapper
-            if np.issubdtype(dataframe[key].dtype, np.float):
-                mappers[key] = ContinuousMapper(dataframe[key])
-            else:
-                mappers[key] = ObjectMapper(dataframe[key])
-
     # Do we have weights?
     if weights is None:
         weights = {key: 1.0 for key in dataframe.columns}
+
+    # Build a dummy mappers array
+    if mappers is None:
+        mappers = {}
+
+    # Populate any missing mappres
+    for key in weights:
+        # If floating point, use a range mapper
+        # Else: use an object mapper
+        if key in mappers:
+            continue
+
+        if np.issubdtype(dataframe[key].dtype, np.float):
+            mappers[key] = ContinuousMapper(dataframe[key])
+        else:
+            mappers[key] = ObjectMapper(dataframe[key])
 
     # Compute binary array from the dataframe
     # Build a mapping of columns to probabilities and weights
