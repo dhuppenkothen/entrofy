@@ -37,11 +37,13 @@ def entrofy(dataframe, n,
         By default, a uniform weighting is used
 
     pre_selects : None or iterable
-        Optionally, you may pre-specify a set of rows to be forced into the solution.
+        Optionally, you may pre-specify a set of rows to be forced into the
+        solution.
         Values must be valid indices for dataframe.
 
     opt-out : None or iterable
-        Optionally, you may pre-specify a set of rows to be forced into the solution.
+        Optionally, you may pre-specify a set of rows to be ignored when
+        searching for a solution.
         Values must be valid indices for dataframe.
 
     quantile : float, values in [0,1]
