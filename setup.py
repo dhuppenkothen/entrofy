@@ -29,7 +29,8 @@ setup(
     install_requires=[
         'pandas>=0.16',
         'numpy>=1.10',
-        'seaborn>=0.6.0'
+        'seaborn>=0.6.0',
+        'matplotlib>=1.4.3'
     ],
     extras_require={
         'docs': ['numpydoc']
