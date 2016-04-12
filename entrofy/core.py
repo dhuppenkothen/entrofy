@@ -158,7 +158,11 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
             break
 
         # Initialize the distribution vector
-        p = np.nanmean(X[y], axis=0)
+        if np.any(y):
+            p = np.nanmean(X[y], axis=0)
+        else:
+            p = np.zeros(X.shape[1])
+
         p[np.isnan(p)] = 0.0
 
         # Compute the candidate distributions
