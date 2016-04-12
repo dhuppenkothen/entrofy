@@ -20,3 +20,9 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Contribute
+----------
+- `Issue Tracker <http://github.com/dhuppenkothen/entrofy/issues>`_
+- `Source Code <http://github.com/dhuppenkothen/entrofy>`_
+
