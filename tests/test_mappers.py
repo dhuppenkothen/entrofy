@@ -59,7 +59,6 @@ class TestContinuousMapper(object):
 
         c = ContinuousMapper(self.df["age"], n_out=n_out,
                              boundaries=test_boundaries)
-        print(c.targets.keys())
         cname = ["{:2f}_{:2f}".format(test_boundaries[i], test_boundaries[i+1])
                  for i in range(n_out)]
 
@@ -73,7 +72,6 @@ class TestContinuousMapper(object):
 
         c = ContinuousMapper(self.df["age"], n_out=n_out, boundaries=test_boundaries,
                              prefix="test_")
-        print(c.targets.keys())
         cname = ["test_{:2f}_{:2f}".format(test_boundaries[i],
                                            test_boundaries[i+1])
                  for i in range(n_out)]
@@ -85,7 +83,8 @@ class TestContinuousMapper(object):
     def test_default_targets(self):
         for i in range(5):
             c = ContinuousMapper(self.df["age"], n_out=i+1)
-            assert np.isclose(c.targets[c.targets.keys()[i]], 1./(i+1))
+            keys = list(c.targets.keys())
+            assert np.isclose(c.targets[keys[i]], 1./(i+1))
 
     def test_map_works_correctly(self):
         n_out = 1

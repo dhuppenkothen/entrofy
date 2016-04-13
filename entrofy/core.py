@@ -8,6 +8,7 @@ import six
 import warnings
 
 from .mappers import ContinuousMapper, ObjectMapper
+from .utils import check_random_state
 
 __all__ = ['entrofy']
 
@@ -18,7 +19,8 @@ def entrofy(dataframe, n,
             pre_selects=None,
             opt_outs=None,
             quantile=0.01,
-            n_trials=15):
+            n_trials=15,
+            seed=None):
     '''Entrofy your panel.
 
     Parameters
@@ -55,6 +57,8 @@ def entrofy(dataframe, n,
         If pre_selects is None, run `n_trials` random initializations and return
         the solution with the best objective value.
 
+    seed : [optional] int or numpy.random.RandomState
+        An optional seed or random number state.
 
     Returns
     -------
@@ -65,6 +69,9 @@ def entrofy(dataframe, n,
         The score of the solution found.  Larger is better.
 
     '''
+
+    rng = check_random_state(seed)
+
     # Drop the opt-outs
     if opt_outs is not None:
         dataframe = dataframe[~dataframe.index.isin(opt_outs)]
@@ -111,7 +118,7 @@ def entrofy(dataframe, n,
         target_weight[i] = all_weights[key]
 
     # Run the specified number of randomized trials
-    results = [__entrofy(df_binary.values, n,
+    results = [__entrofy(df_binary.values, n, rng,
                          w=target_weight,
                          q=target_prob,
                          pre_selects=pre_selects,
@@ -128,7 +135,7 @@ def entrofy(dataframe, n,
     return dataframe.index[best], max_score
 
 
-def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
+def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
     '''See entrofy() for documentation'''
 
     n_participants, n_attributes = X.shape
@@ -153,7 +160,7 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
 
     if pre_selects is None:
         # Select one at random
-        pre_selects = np.random.choice(n_participants, size=1)
+        pre_selects = rng.choice(n_participants, size=1)
 
     y[pre_selects] = True
 
@@ -193,7 +200,7 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
         delta_real = delta[np.isfinite(delta)]
         target_score = np.percentile(delta_real, 1.0-quantile)
 
-        new_idx = np.random.choice(np.flatnonzero(delta >= target_score))
+        new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
     return __objective(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
