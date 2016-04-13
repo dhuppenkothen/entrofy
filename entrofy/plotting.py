@@ -6,6 +6,9 @@ import seaborn as sns
 
 from entrofy.mappers import ObjectMapper, ContinuousMapper
 
+
+__all__ = ["plot", "plot_fractions", "plot_correlation", "plot_distribution"]
+
 def _make_counts_summary(column, key, mapper, datatype="all"):
     """
     Summarize the statistics of the input column.
@@ -124,11 +127,9 @@ def plot(df, idx, mappers):
     """
 
     columns = mappers.keys()
-    print(columns)
 
     fig_all = []
     for c in columns:
-        print(c)
         fig, _ = plot_fractions(df[c], idx, c, mappers[c])
         fig_all.append(fig)
 
@@ -210,7 +211,7 @@ def _plot_continuous(df, xlabel, ylabel, ax, plottype="kde", n_levels=10,
 
     return ax
 
-def plot_correlations(df, xlabel, ylabel, xmapper=None, ymapper=None,
+def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
                       ax = None, xtype="categorical", ytype="categorical",
                       cmap="YlGnBu", prefac=10., cat_type="box", n_out=3,
                       cont_type="kde"):
@@ -299,8 +300,16 @@ def plot_correlations(df, xlabel, ylabel, xmapper=None, ymapper=None,
 
     return ax
 
-def plot_dist(df, xlabel, xmapper, xtype="categorical", ax=None,
+def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
               cmap="YlGnBu", nbins=30):
+
+    if xmapper is None:
+        if xtype == "categorical":
+            xmapper = ObjectMapper(df[xlabel])
+        elif xtype == "continuous":
+            xmapper = ContinuousMapper(df[xlabel])
+        else:
+            raise Exception("xtype not valid.")
 
     c = sns.color_palette(cmap, 5)[2]
 
@@ -312,8 +321,6 @@ def plot_dist(df, xlabel, xmapper, xtype="categorical", ax=None,
 
         summary = summary.sort(xlabel)
 
-        #unique_labels = len(full_summary.index)
-
         #make figure
         sns.barplot(x=xlabel, y="counts", data=summary, ax=ax, color=c)
         ax.set_ylabel("Fraction of sample")
@@ -321,7 +328,7 @@ def plot_dist(df, xlabel, xmapper, xtype="categorical", ax=None,
     elif xtype == "continuous":
         column = df[xlabel]
         c_clean = column[np.isfinite(column)]
-        h, bins, edges = ax.hist(c_clean, bins=nbins, histtype="stepfilled",
+        _, _, _ = ax.hist(c_clean, bins=nbins, histtype="stepfilled",
                                  alpha=0.8, color=c)
         ax.set_xlabel(xlabel)
         plt.ylabel("Number of occurrences")
