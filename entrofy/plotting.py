@@ -109,7 +109,7 @@ def plot_fractions(column, idx, key, mapper):
     return fig, summary
 
 
-def plot(df, idx, mappers):
+def plot(df, idx, weights, mappers=None):
     """
     Plot bar plots for all columns in the DataFrame.
 
@@ -121,7 +121,11 @@ def plot(df, idx, mappers):
     idx : iterable
         An iterable containing the indices of selected participants.
 
-    mappers :  dict {column: entrofy.BaseMapper}
+    weights : optional, dict {column: float}
+        Weighting over dataframe columns
+        By default, a uniform weighting is used
+
+    mappers : optional, dict {column: entrofy.BaseMapper}
         Dictionary mapping dataframe columns to BaseMapper objects
 
     Returns
@@ -130,6 +134,8 @@ def plot(df, idx, mappers):
         The list containing all Figure objects with the plots.
 
     """
+    if mappers is None:
+        mappers = construct_mappers(df, weights)
 
     columns = list(mappers.keys())
 
@@ -490,7 +496,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
 
 
 def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
-              cmap="YlGnBu", bins=30):
+                      cmap="YlGnBu", bins=30):
     """
     Plot the distribution of a single variable in the DataFrame.
 
@@ -515,7 +521,7 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
     cmap : matplotlib.cm.colormap
         A matplotlib colormap to use for shading the bubbles
 
-    nbins : int
+    bins : int
         The number of bins for the histogram.
 
     Returns
