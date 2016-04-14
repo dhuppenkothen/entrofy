@@ -11,6 +11,7 @@ from entrofy.core import _construct_mappers
 
 __all__ = ["plot", "plot_fractions", "plot_correlation", "plot_distribution"]
 
+
 def _make_counts_summary(column, key, mapper, datatype="all"):
     """
     Summarize the statistics of the input column.
@@ -49,6 +50,7 @@ def _make_counts_summary(column, key, mapper, datatype="all"):
     summary["type"] = [datatype for _ in range(len(summary.index))]
 
     return summary
+
 
 def plot_fractions(column, idx, key, mapper):
     """
@@ -106,6 +108,7 @@ def plot_fractions(column, idx, key, mapper):
 
     return fig, summary
 
+
 def plot(df, idx, mappers):
     """
     Plot bar plots for all columns in the DataFrame.
@@ -155,6 +158,7 @@ def _check_data_type(column):
         return "continuous"
     else:
         return "categorical"
+
 
 def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
     """
@@ -222,11 +226,13 @@ def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
 
     return ax
 
+
 def _convert_continuous_to_categorical(column, mapper):
     binary = mapper.transform(column)
     b_stacked = binary.stack()
     cat_column = pd.Series(pd.Categorical(b_stacked[b_stacked != 0].index.get_level_values(1)))
     return cat_column
+
 
 def _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
                                      n_cat=5, plottype="box"):
@@ -340,6 +346,7 @@ def _plot_continuous(df, xlabel, ylabel, ax, plottype="kde", n_levels=10,
                    edgecolor="none", alpha=0.8)
 
     return ax
+
 
 def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
                       ax = None, xtype="categorical", ytype="categorical",
@@ -464,14 +471,12 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
             df_temp = pd.DataFrame([cat_column, df[ylabel]],
                                    columns=[xlabel, ylabel])
 
-            ax = _plot_categorical(df_temp, xlabel, ylabel,
-                               x_fields, y_fields,
-                               x_keys, y_keys, prefac,
-                               ax, cmap)
+            ax = _plot_categorical(df_temp, xlabel, ylabel, x_fields, y_fields,
+                                   x_keys, y_keys, prefac, ax, cmap)
 
         else:
-            ax = _plot_categorical_and_continuous(df, xlabel, ylabel,
-                                                  ax, cmap, n_cat=n_cat,
+            ax = _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
+                                                  n_cat=n_cat,
                                                   plottype=cat_type)
 
     elif ((xtype == "continuous") & (ytype == "continuous")):
@@ -482,6 +487,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
         raise Exception("Not currently supported!")
 
     return ax
+
 
 def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
               cmap="YlGnBu", nbins=30):
@@ -550,6 +556,7 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
         plt.ylabel("Number of occurrences")
 
     return c
+
 
 def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
                   prefac=10., cat_type="box", cont_type="hist"):
@@ -637,10 +644,10 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
 
             # upper triangle: plot the bivariate distributions
             else:
-                axes[i,j] = plot_correlation(df, kx, ky, xmapper=mappers[kx],
-                                             ymapper=mappers[ky], ax=axes[i,j],
-                                             cmap=cmap, xtype=xtype,
-                                             ytype=ytype, prefac=prefac,
+                axes[i,j] = plot_correlation(df, ky, kx, xmapper=mappers[ky],
+                                             ymapper=mappers[kx], ax=axes[i,j],
+                                             cmap=cmap, xtype=ytype,
+                                             ytype=xtype, prefac=prefac,
                                              cat_type=cat_type,
                                              cont_type=cont_type)
 
