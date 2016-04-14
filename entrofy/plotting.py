@@ -1,3 +1,4 @@
+from __future__ import division
 import matplotlib.pyplot as plt
 
 import numpy as np
@@ -136,13 +137,66 @@ def plot(df, idx, mappers):
     return fig_all
 
 
+def _check_data_type(column):
+    """
+    Check whether the data in column is categorical or continuous.
 
-def _plot_categorical(df, xlabel, ylabel, x_fields, y_fields,
-                      x_keys, y_keys, prefac, ax, cmap):
+    Parameter
+    ---------
+    column : pandas.Series
+        A pandas Series object with the data
 
+    Returns
+    -------
+    {"continuous" | "categorical"} : str
+    """
+    if np.issubdtype(column.dtype, np.float):
+        return "continuous"
+    else:
+        return "categorical"
+
+def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
+    """
+    Plot two categorical variables against each other in a bubble plot.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A pandas DataFrame with the data
+
+    xlabel : str
+        The column name for the variable on the x-axis
+
+    ylabel : str
+        The column name for the variable on the y-axis
+
+    x_keys : iterable
+        A list containing the different categories in df[xlabel]
+
+    y_keys: iterable
+        A list containing the different categories in df[ylabel]
+
+    prefac : float
+        A pre-factor steering the shading of the bubbles
+
+    ax : matplotlib.Axes object
+        The matplotlib.Axes object to plot the bubble plot into
+
+    cmap : matplotlib.cm.colormap
+        A matplotlib colormap to use for shading the bubbles
+
+    s : float
+        A pre-factor changing the overall size of the bubbles
+
+    Returns
+    -------
+    ax : matplotlib.Axes object
+        The same matplotlib.Axes object for further manipulation
+
+    """
     tuples, counts = [], []
-    for i in range(x_fields):
-        for j in range(y_fields):
+    for i in range(len(x_keys)):
+        for j in range(len(y_keys)):
             tuples.append((i,j))
             counts.append(len(df[(df[xlabel] == x_keys[i]) &
                                  (df[ylabel] == y_keys[j])]))
@@ -150,9 +204,9 @@ def _plot_categorical(df, xlabel, ylabel, x_fields, y_fields,
     x, y = zip(*tuples)
 
     cmap = plt.cm.get_cmap(cmap)
-    sizes = np.array(counts)**2.0
+    sizes = (np.array(counts)/np.sum(counts))
 
-    ax.scatter(x, y, s=sizes, marker='o', linewidths=1, edgecolor='black',
+    ax.scatter(x, y, s=s*1000*sizes, marker='o', linewidths=1, edgecolor='black',
                 c=cmap(prefac*sizes/(np.max(sizes)-np.min(sizes))), alpha=0.7)
 
     ax.set_xticks(np.arange(len(x_keys)))
@@ -175,7 +229,40 @@ def _convert_continuous_to_categorical(column, mapper):
 
 def _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
                                      n_cat=5, plottype="box"):
+    """
+    Plot a categorical variable and a continuous variable against each
+    other. Types of plots include box plot, violin plot, strip plot and swarm
+    plot.
 
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A pandas DataFrame with the data
+
+    xlabel : str
+        The column name for the variable on the x-axis
+
+    ylabel : str
+        The column name for the variable on the y-axis
+
+    ax : matplotlib.Axes object
+        The matplotlib.Axes object to plot the bubble plot into
+
+    cmap : matplotlib.cm.colormap
+        A matplotlib colormap to use for shading the bubbles
+
+    n_cat : int
+        The number of categories; used for creating the colour map
+
+    plottype : {"box" | "violin" | "strip" | "swarm"}
+        The type of plot to produce; default is a box plot
+
+    Returns
+    -------
+    ax : matplotlib.Axes object
+        The same matplotlib.Axes object for further manipulation
+
+    """
     current_palette = sns.color_palette(cmap, n_cat)
     if plottype == "box":
         sns.boxplot(x=xlabel, y=ylabel, data=df,
@@ -194,6 +281,48 @@ def _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
 
 def _plot_continuous(df, xlabel, ylabel, ax, plottype="kde", n_levels=10,
                      cmap="YlGnBu", shade=True):
+
+    """
+    Plot a two continuous variables against each other in a scatter plot or a
+    kernel density estimate.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A pandas DataFrame with the data
+
+    xlabel : str
+        The column name for the variable on the x-axis
+
+    ylabel : str
+        The column name for the variable on the y-axis
+
+    ax : matplotlib.Axes object
+        The matplotlib.Axes object to plot the bubble plot into
+
+    plottype : {"kde" | "scatter"}
+        The type of plot to produce. Either a kernel density estimate ("kde")
+        or a scatter plor ("scatter").
+
+    n_levels : int
+        the number of levels to plot for the kernel density estimate plot.
+        Default is 10
+
+    cmap : matplotlib.cm.colormap
+        A matplotlib colormap to use for shading the bubbles
+
+    shade : bool
+        If True, plot kernel density estimate contours in coloured shades.
+        If False, plot only the outline of each contour.
+
+    Returns
+    -------
+    ax : matplotlib.Axes object
+        The same matplotlib.Axes object for further manipulation
+
+    """
+
+
     xcolumn = df[xlabel]
     ycolumn = df[ylabel]
     x_clean = xcolumn[np.isfinite(xcolumn) & np.isfinite(ycolumn)]
@@ -213,9 +342,64 @@ def _plot_continuous(df, xlabel, ylabel, ax, plottype="kde", n_levels=10,
 
 def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
                       ax = None, xtype="categorical", ytype="categorical",
-                      cmap="YlGnBu", prefac=10., cat_type="box", n_out=3,
-                      cont_type="kde"):
+                      cmap="YlGnBu", prefac=10., cat_type="box",
+                      cont_type="kde", s=2):
 
+    """
+    Plot two variables against each other. Produces different types of
+    Figures depending on the type of data being plotted.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A pandas DataFrame with the data
+
+    xlabel : str
+        The column name for the variable on the x-axis
+
+    ylabel : str
+        The column name for the variable on the y-axis
+
+    xmapper : entrofy.mappers.BaseMapper subclass object
+        A mapper object to use for the data on the x-axis.
+        If None, the object is created within this function using some defaults.
+
+    ymapper : entrofy.mappers.BaseMapper subclass object
+        A mapper object to use for the data on the y-axis.
+        If None, the object is created within this function using some defaults.
+
+    ax : matplotlib.Axes object
+        The matplotlib.Axes object to plot the bubble plot into
+
+    xtype : {"categorical" | "continuous"}
+        The type of the data in df[xlabel]
+
+    ytype : {"categorical" | "continuous"}
+        The type of the data in df[ylabel]
+
+    cmap : matplotlib.cm.colormap
+        A matplotlib colormap to use for shading the bubbles
+
+    prefac : float
+        A pre-factor steering the shading of the bubbles
+
+    cat_type : {"box" | "strip" | "swarm" | "violin" | "categorical"}
+        The type of plot for any plot including both categorical and continuous
+        data.
+
+    cont_type : {"kde" | "scatter"}
+        The type of plot to produce. Either a kernel density estimate ("kde")
+        or a scatter plor ("scatter").
+
+    s : float
+        A pre-factor changing the overall size of the bubbles
+
+    Returns
+    -------
+    ax : matplotlib.Axes object
+        The same matplotlib.Axes object for further manipulation
+
+    """
     if ax is None:
         fig, ax = plt.subplots(1,1, figsize=(9,7))
 
@@ -248,7 +432,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
         ax = _plot_categorical(df, xlabel, ylabel,
                                x_fields, y_fields,
                                x_keys, y_keys, prefac,
-                               ax, cmap)
+                               ax, cmap, s)
 
     elif ((xtype == "categorical") & (ytype == "continuous")):
         n_cat = x_fields
@@ -302,6 +486,40 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
 
 def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
               cmap="YlGnBu", nbins=30):
+    """
+    Plot the distribution of a single variable in the DataFrame.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A pandas DataFrame with the data
+
+    xlabel : str
+        The column name for the variable on the x-axis
+
+    xmapper : entrofy.mappers.BaseMapper subclass object
+        A mapper object to use for the data on the x-axis.
+        If None, the object is created within this function using some defaults.
+
+    xtype : {"categorical" | "continuous"}
+        The type of the data in df[xlabel]
+
+    ax : matplotlib.Axes object
+        The matplotlib.Axes object to plot the bubble plot into
+
+    cmap : matplotlib.cm.colormap
+        A matplotlib colormap to use for shading the bubbles
+
+    nbins : int
+        The number of bins for the histogram.
+
+    Returns
+    -------
+    ax : matplotlib.Axes object
+        The same matplotlib.Axes object for further manipulation
+
+
+    """
 
     if xmapper is None:
         if xtype == "categorical":
