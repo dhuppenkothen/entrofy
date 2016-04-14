@@ -99,7 +99,7 @@ def entrofy(dataframe, n,
 
     # Build a dummy mappers array
     if mappers is None:
-            mappers = _construct_mappers(dataframe, weights)
+        mappers = _construct_mappers(dataframe, weights)
 
     # Compute binary array from the dataframe
     # Build a mapping of columns to probabilities and weights
@@ -160,14 +160,14 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
     if k == n_participants:
         return np.arange(n_participants)
 
+    # Convert fractions to sums
+    q = np.round(k * q)
+
     # Initialization
     y = np.zeros(n_participants, dtype=bool)
 
-    if pre_selects is None:
-        # Select one at random
-        pre_selects = rng.choice(n_participants, size=1)
-
-    y[pre_selects] = True
+    if pre_selects is not None:
+        y[pre_selects] = True
 
     # Where do we have missing data?
     Xn = np.isnan(X)
@@ -185,12 +185,12 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
         # than to prevent it by slicing out each column independently.
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            p = np.nanmean(X[y], axis=0)
+            p = np.nansum(X[y], axis=0)
 
         p[np.isnan(p)] = 0.0
 
         # Compute the candidate distributions
-        p_new = (p * i + X) / (i + 1.0)
+        p_new = p + X
 
         # Wherever X is nan, propagate the old p since we have no new information
         p_new[Xn] = (Xn * p)[Xn]
@@ -208,16 +208,8 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
         new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
-    return __objective(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
+    return __objective(np.nansum(X[y], axis=0), w, q), np.flatnonzero(y)
 
 
-def __objective(p, w, q, amin=1e-200):
-    # Prevent numerical underflow in log
-    pbar = 1. - p
-    qbar = 1. - q
-
-    entropy = (p * (np.log(p + amin) - np.log(q + amin)) +
-               pbar * (np.log(pbar + amin) - np.log(qbar + amin)))
-
-    return - entropy.dot(w)
-
+def __objective(p, w, q):
+    return np.minimum(q, p).dot(w)
