@@ -25,12 +25,13 @@ class TestContinuousMapper(object):
 
     def test_number_of_boundaries_set_correctly_by_default(self):
         c = ContinuousMapper(self.df["age"])
-        assert len(c.boundaries) == 3
+        assert len(c.boundaries) == 4
 
     def test_boundaries_get_set_correctly_by_default(self):
         c = ContinuousMapper(self.df["age"])
         db = self.bmax - self.bmin
-        test_boundaries = [self.bmin, self.bmin+0.5*db, self.bmax]
+        test_boundaries = [self.bmin, self.bmin+db/3., self.bmin+2.*db/3.,
+                           self.bmax]
         assert np.allclose(c.boundaries, test_boundaries)
 
     def test_number_of_boundaries_get_set_correctly_by_user(self):
