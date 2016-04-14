@@ -49,7 +49,8 @@ def entrofy(dataframe, n,
             opt_outs=None,
             quantile=0.01,
             n_trials=15,
-            seed=None):
+            seed=None,
+            alpha=0.5):
     '''Entrofy your panel.
 
     Parameters
@@ -89,6 +90,9 @@ def entrofy(dataframe, n,
     seed : [optional] int or numpy.random.RandomState
         An optional seed or random number state.
 
+    alpha : float in (0, 1]
+        Scaling exponent for the objective function.
+
     Returns
     -------
     idx : pd.Index, length=(k,)
@@ -111,7 +115,7 @@ def entrofy(dataframe, n,
 
     # Build a dummy mappers array
     if mappers is None:
-            mappers = construct_mappers(dataframe, weights)
+        mappers = construct_mappers(dataframe, weights)
 
     # Compute binary array from the dataframe
     # Build a mapping of columns to probabilities and weights
@@ -139,7 +143,8 @@ def entrofy(dataframe, n,
                          w=target_weight,
                          q=target_prob,
                          pre_selects=pre_selects,
-                         quantile=quantile)
+                         quantile=quantile,
+                         alpha=alpha)
                for _ in range(n_trials)]
 
     # Select the trial with the best score
@@ -152,7 +157,7 @@ def entrofy(dataframe, n,
     return dataframe.index[best], max_score
 
 
-def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
+def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5):
     '''See entrofy() for documentation'''
 
     n_participants, n_attributes = X.shape
@@ -172,14 +177,14 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
     if k == n_participants:
         return np.arange(n_participants)
 
+    # Convert fractions to sums
+    q = np.round(k * q)
+
     # Initialization
     y = np.zeros(n_participants, dtype=bool)
 
-    if pre_selects is None:
-        # Select one at random
-        pre_selects = rng.choice(n_participants, size=1)
-
-    y[pre_selects] = True
+    if pre_selects is not None:
+        y[pre_selects] = True
 
     # Where do we have missing data?
     Xn = np.isnan(X)
@@ -197,39 +202,31 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
         # than to prevent it by slicing out each column independently.
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
-            p = np.nanmean(X[y], axis=0)
+            p = np.nansum(X[y], axis=0)
 
         p[np.isnan(p)] = 0.0
 
         # Compute the candidate distributions
-        p_new = (p * i + X) / (i + 1.0)
+        p_new = p + X
 
         # Wherever X is nan, propagate the old p since we have no new information
         p_new[Xn] = (Xn * p)[Xn]
 
         # Compute marginal gain for each candidate
-        delta = __objective(p_new, w, q) - __objective(p, w, q)
+        delta = __objective(p_new, w, q, alpha=alpha) - __objective(p, w, q, alpha=alpha)
 
         # Knock out the points we've already taken
         delta[y] = -np.inf
 
         # Select the top score.  Break near-ties randomly.
         delta_real = delta[np.isfinite(delta)]
-        target_score = np.percentile(delta_real, 1.0-quantile)
+        target_score = np.percentile(delta_real, 100 * (1.0-quantile))
 
         new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
-    return __objective(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
+    return __objective(np.nansum(X[y], axis=0), w, q, alpha=alpha), np.flatnonzero(y)
 
 
-def __objective(p, w, q, amin=1e-200):
-    # Prevent numerical underflow in log
-    pbar = 1. - p
-    qbar = 1. - q
-
-    entropy = (p * (np.log(p + amin) - np.log(q + amin)) +
-               pbar * (np.log(pbar + amin) - np.log(qbar + amin)))
-
-    return - entropy.dot(w)
-
+def __objective(p, w, q, alpha=0.5):
+    return ((np.minimum(q, p))**(alpha)).dot(w)
