@@ -143,17 +143,21 @@ def plot(df, idx, weights, mappers=None, cols=4):
     ncolumns = len(columns)
 
     rows = np.floor(ncolumns/cols)
-    if (ncolumns % rows) > 0:
+    if (ncolumns % cols) > 0:
         rows += 1
 
-    fig = plt.figure(figsize=(4*rows, 3*columns))
+
+    fig = plt.figure(figsize=(4*cols, 3*rows))
 
     axes = []
+
     for i,c in enumerate(columns):
-        ax = fig.add_subplot(rows, columns, i+1)
+        print("i: " + str(i))
+        ax = fig.add_subplot(rows, cols, i+1)
         ax, _ = plot_fractions(df[c], idx, c, mappers[c], ax=ax)
         axes.append(ax)
 
+    plt.tight_layout()
     return axes
 
 
@@ -572,8 +576,8 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
     elif xtype == "continuous":
         column = df[xlabel]
         c_clean = column[np.isfinite(column)]
-        _, _, _ = ax.hist(c_clean, bins=bins, histtype="stepfilled",
-                                 alpha=0.8, color=c)
+        sns.distplot(c_clean, bins=bins, hist={"histtype": "stepfilled"},
+                    color=c, kde=True, ax=ax)
         ax.set_xlabel(xlabel)
         plt.ylabel("Number of occurrences")
 
