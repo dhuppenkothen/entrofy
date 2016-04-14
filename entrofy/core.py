@@ -49,7 +49,8 @@ def entrofy(dataframe, n,
             opt_outs=None,
             quantile=0.01,
             n_trials=15,
-            seed=None):
+            seed=None,
+            alpha=0.5):
     '''Entrofy your panel.
 
     Parameters
@@ -88,6 +89,9 @@ def entrofy(dataframe, n,
 
     seed : [optional] int or numpy.random.RandomState
         An optional seed or random number state.
+
+    alpha : float in (0, 1]
+        Scaling exponent for the objective function.
 
     Returns
     -------
@@ -139,7 +143,8 @@ def entrofy(dataframe, n,
                          w=target_weight,
                          q=target_prob,
                          pre_selects=pre_selects,
-                         quantile=quantile)
+                         quantile=quantile,
+                         alpha=alpha)
                for _ in range(n_trials)]
 
     # Select the trial with the best score
@@ -152,7 +157,7 @@ def entrofy(dataframe, n,
     return dataframe.index[best], max_score
 
 
-def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
+def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5):
     '''See entrofy() for documentation'''
 
     n_participants, n_attributes = X.shape
@@ -208,7 +213,8 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
         p_new[Xn] = (Xn * p)[Xn]
 
         # Compute marginal gain for each candidate
-        delta = __objective(p_new, w, q) - __objective(p, w, q)
+        delta = __objective(p_new, w, q, alpha=alpha) - __objective(p, w, q, alpha=alpha)
+
         # Knock out the points we've already taken
         delta[y] = -np.inf
 
@@ -219,8 +225,8 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
         new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
-    return __objective(np.nansum(X[y], axis=0), w, q), np.flatnonzero(y)
+    return __objective(np.nansum(X[y], axis=0), w, q, alpha=alpha), np.flatnonzero(y)
 
 
-def __objective(p, w, q):
-    return np.minimum(q, p).dot(w)
+def __objective(p, w, q, alpha=0.5):
+    return ((np.minimum(q, p))**(alpha)).dot(w)
