@@ -197,8 +197,6 @@ class ContinuousMapper(BaseMapper):
             assert self.n_out == len(column_names),  ("The list of column names"
                                                       " must equal n_out.")
 
-        #print(bin_edges)
-        print(self.boundaries)
 
         # check whether bin edges and boundaries are equal
         #assert np.all(bin_edges == self.boundaries), ("bin edges should equal "
