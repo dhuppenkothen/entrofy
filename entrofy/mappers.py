@@ -59,7 +59,7 @@ def map_boundaries(bmin, bmax, last=False):
 
 class BaseMapper(object):
     '''A generic base class for mapper objects'''
-    def __init__(self):
+    def __init__(self, column, **kwargs):
         pass
 
     def transform(self, column):
@@ -166,10 +166,14 @@ class ContinuousMapper(BaseMapper):
             then these edges will be used. Must be of len(boundaries) == n_out+1
             If `None`, the data will be split up into `n_out` equal-sized bins
 
+        targets : dict
+
         column_names: iterable, optional
             An optional list of strings with the names for the individual
             columns created in this class. Must be of length `n_out`. If None,
-            the values of the ranges will be used.
+            the values of the ranges will be used. Required if targets are set,
+            so that the code knows how to translate between the bins created
+            and the target fractions in `targets`.
 
         prefix: string, optional
             A prefix string to go in front of the `column_names`
@@ -191,16 +195,15 @@ class ContinuousMapper(BaseMapper):
         else:
             self.boundaries = np.linspace(minval, maxval, n_out+1)
 
-
         # make sure list of column names matches the number of columns
         if column_names is not None:
             assert self.n_out == len(column_names),  ("The list of column names"
                                                       " must equal n_out.")
 
-
-        # check whether bin edges and boundaries are equal
-        #assert np.all(bin_edges == self.boundaries), ("bin edges should equal "
-        #                                              "boundaries?")
+        # assert that the keys in `targets` are the same as the column names.
+        if targets is not None:
+            assert [c == t for c,t  in zip(np.sort(column_names),
+                                           np.sort(targets.keys()))]
 
         # empty target dictionary
         self.targets = {}
@@ -216,7 +219,11 @@ class ContinuousMapper(BaseMapper):
             else:
                 cname = column_names[0]
 
-            self.targets[cname] = 1.0
+            if targets is None:
+                self.targets[cname] = 1.0
+            else:
+                self.targets[cname] = targets[cname]
+
             self._map[cname] = map_boundaries(self.boundaries[0],
                                               self.boundaries[1], last=True)
 
@@ -229,7 +236,11 @@ class ContinuousMapper(BaseMapper):
                 else:
                     cname = column_names[i]
 
-                self.targets[cname] = default_target
+                if targets is None:
+                    self.targets[cname] = default_target
+                else:
+                    self.targets[cname] = targets[cname]
+
                 if i == n_out-1:
                     last = True
                 else:
