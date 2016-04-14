@@ -52,7 +52,7 @@ def _make_counts_summary(column, key, mapper, datatype="all"):
     return summary
 
 
-def plot_fractions(column, idx, key, mapper):
+def plot_fractions(column, idx, key, mapper, ax = None):
     """
     Plot the fractions
 
@@ -97,7 +97,9 @@ def plot_fractions(column, idx, key, mapper):
     unique_labels = len(full_summary.index)
 
     # make figure
-    fig, ax = plt.subplots(1,1, figsize=(4*unique_labels, 8))
+    if ax is None:
+        fig, ax = plt.subplots(1,1, figsize=(4*unique_labels, 8))
+
     sns.barplot(x=key, y="counts", hue="type", data=summary, ax=ax)
     ax.set_ylabel("Fraction of sample")
 
@@ -106,10 +108,10 @@ def plot_fractions(column, idx, key, mapper):
         ax.hlines(mapper.targets[l], -0.5+i*1.0, 0.5+i*1.0, lw=2,
                   linestyle="dashed")
 
-    return fig, summary
+    return ax, summary
 
 
-def plot(df, idx, weights, mappers=None):
+def plot(df, idx, weights, mappers=None, cols=4):
     """
     Plot bar plots for all columns in the DataFrame.
 
@@ -138,13 +140,21 @@ def plot(df, idx, weights, mappers=None):
         mappers = construct_mappers(df, weights)
 
     columns = list(mappers.keys())
+    ncolumns = len(columns)
 
-    fig_all = []
-    for c in columns:
-        fig, _ = plot_fractions(df[c], idx, c, mappers[c])
-        fig_all.append(fig)
+    rows = np.floor(ncolumns/cols)
+    if (ncolumns % rows) > 0:
+        rows += 1
 
-    return fig_all
+    fig = plt.figure(figsize=(4*rows, 3*columns))
+
+    axes = []
+    for i,c in enumerate(columns):
+        ax = fig.add_subplot(rows, columns, i+1)
+        ax, _ = plot_fractions(df[c], idx, c, mappers[c], ax=ax)
+        axes.append(ax)
+
+    return axes
 
 
 def _check_data_type(column):
@@ -209,6 +219,7 @@ def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
     for i in range(len(x_keys)):
         for j in range(len(y_keys)):
             tuples.append((i,j))
+
             counts.append(len(df[(df[xlabel] == x_keys[i]) &
                                  (df[ylabel] == y_keys[j])]))
 
@@ -289,6 +300,9 @@ def _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
     elif plottype == "violin":
         sns.violinplot(x=xlabel, y=ylabel, data=df,
                        palette=current_palette, ax=ax)
+    else:
+        raise Exception("plottype not recognized!")
+
     return ax
 
 
@@ -423,6 +437,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
 
         x_fields = len(xmapper.targets)
         x_keys = np.sort(list(xmapper.targets.keys()))
+
     elif xtype == "continuous":
         if xmapper is None:
             xmapper = ContinuousMapper(df[xlabel], n_out=4)
@@ -436,6 +451,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
             ymapper = ObjectMapper(df[ylabel])
         y_fields = len(ymapper.targets)
         y_keys = np.sort(list(ymapper.targets.keys()))
+
     elif ytype == "continuous":
         if ymapper is None:
             ymapper = ContinuousMapper(df[ylabel], n_out=4)
@@ -621,7 +637,13 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
     # determine the types:
     all_types = []
     for k in keys:
-        all_types.append(_check_data_type(df[k]))
+        if isinstance(mappers[k], ObjectMapper):
+            all_types.append("categorical")
+        elif isinstance(mappers[k], ContinuousMapper):
+            all_types.append("continuous")
+
+        else:
+            raise Exception("Data type not recognized!")
 
     # construct the figure
     fig, axes = plt.subplots(nkeys, nkeys, figsize=(4*nkeys, 3*nkeys))
