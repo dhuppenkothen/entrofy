@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sns
 
 from entrofy.mappers import ObjectMapper, ContinuousMapper
-from entrofy.core import _construct_mappers
+from entrofy.core import construct_mappers
 
 
 __all__ = ["plot", "plot_fractions", "plot_correlation", "plot_distribution"]
@@ -102,7 +102,7 @@ def plot_fractions(column, idx, key, mapper):
     ax.set_ylabel("Fraction of sample")
 
     # add targets
-    for i,l in enumerate(np.sort(mapper.targets.keys())):
+    for i,l in enumerate(np.sort(list(mapper.targets.keys()))):
         ax.hlines(mapper.targets[l], -0.5+i*1.0, 0.5+i*1.0, lw=2,
                   linestyle="dashed")
 
@@ -131,7 +131,7 @@ def plot(df, idx, mappers):
 
     """
 
-    columns = mappers.keys()
+    columns = list(mappers.keys())
 
     fig_all = []
     for c in columns:
@@ -416,7 +416,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
             xmapper = ObjectMapper(df[xlabel])
 
         x_fields = len(xmapper.targets)
-        x_keys = np.sort(xmapper.targets.keys())
+        x_keys = np.sort(list(xmapper.targets.keys()))
     elif xtype == "continuous":
         if xmapper is None:
             xmapper = ContinuousMapper(df[xlabel], n_out=4)
@@ -429,7 +429,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
         if ymapper is None:
             ymapper = ObjectMapper(df[ylabel])
         y_fields = len(ymapper.targets)
-        y_keys = np.sort(ymapper.targets.keys())
+        y_keys = np.sort(list(ymapper.targets.keys()))
     elif ytype == "continuous":
         if ymapper is None:
             ymapper = ContinuousMapper(df[ylabel], n_out=4)
@@ -448,7 +448,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
                                                             ymapper)
             cat_column.name = ylabel
             y_fields = len(ymapper.targets)
-            y_keys = np.sort(ymapper.targets.keys())
+            y_keys = np.sort(list(ymapper.targets.keys()))
             df_temp = pd.DataFrame([df[xlabel], cat_column]).transpose()
 
             ax = _plot_categorical(df_temp, xlabel, ylabel,
@@ -466,7 +466,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
             cat_column = _convert_continuous_to_categorical(df[xlabel],
                                                             xmapper)
             x_fields = len(xmapper.targets)
-            x_keys = np.sort(xmapper.targets.keys())
+            x_keys = np.sort(list(xmapper.targets.keys()))
 
             df_temp = pd.DataFrame([cat_column, df[ylabel]],
                                    columns=[xlabel, ylabel])
@@ -490,7 +490,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
 
 
 def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
-              cmap="YlGnBu", nbins=30):
+              cmap="YlGnBu", bins=30):
     """
     Plot the distribution of a single variable in the DataFrame.
 
@@ -550,7 +550,7 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
     elif xtype == "continuous":
         column = df[xlabel]
         c_clean = column[np.isfinite(column)]
-        _, _, _ = ax.hist(c_clean, bins=nbins, histtype="stepfilled",
+        _, _, _ = ax.hist(c_clean, bins=bins, histtype="stepfilled",
                                  alpha=0.8, color=c)
         ax.set_xlabel(xlabel)
         plt.ylabel("Number of occurrences")
@@ -558,7 +558,7 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
     return c
 
 
-def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
+def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
                   prefac=10., cat_type="box", cont_type="hist"):
     """
     Make a triangle plot of all the relevant columns in the DataFrame.
@@ -578,7 +578,7 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
     cmap : matplotlib.cm.colormap
         A matplotlib colormap to use for shading the bubbles
 
-    nbins : int
+    bins : int
         The number of bins for the histogram.
 
     prefac : float
@@ -604,10 +604,10 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
 
     # if mappers are None, construct them with some default settings
     if mappers is None:
-        mappers = _construct_mappers(df, weights)
+        mappers = construct_mappers(df, weights)
 
     # the keys
-    keys = np.sort(mappers.keys())
+    keys = np.sort(list(mappers.keys()))
 
     # the number of panels I'll need
     nkeys = len(keys)
@@ -640,7 +640,7 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
             elif i == j:
                 axes[i,j] = plot_distribution(df, kx, xmapper=mappers[kx],
                                               xtype=xtype, ax=axes[i,j],
-                                              cmap=cmap, nbins=nbins)
+                                              cmap=cmap, bins=bins)
 
             # upper triangle: plot the bivariate distributions
             else:

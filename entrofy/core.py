@@ -10,23 +10,35 @@ import warnings
 from .mappers import ContinuousMapper, ObjectMapper
 from .utils import check_random_state
 
-__all__ = ['entrofy']
+__all__ = ['entrofy', 'construct_mappers']
 
 
-def _construct_mappers(dataframe, weights):
+def construct_mappers(dataframe, weights, datatypes=None):
     mappers = {}
 
     # Populate any missing mappres
     for key in weights:
-        # If floating point, use a range mapper
-        # Else: use an object mapper
-        if key in mappers:
+
+        if weights[key] == 0 or key in mappers:
             continue
 
-        if np.issubdtype(dataframe[key].dtype, np.float):
-            mappers[key] = ContinuousMapper(dataframe[key])
+        # if datatypes is a dictionary describing the type of
+        # data, use the relevant mapper:
+        if datatypes is not None:
+            if datatypes[key] == "categorical":
+                mappers[key] = ObjectMapper(dataframe[key])
+            elif datatypes[key] == "continuous":
+                mappers[key] = ContinuousMapper(dataframe[key])
+            else:
+                raise Exception("Data type not recognized!")
+        # if not, try to infer from data
         else:
-            mappers[key] = ObjectMapper(dataframe[key])
+            # If floating point, use a range mapper
+            # Else: use an object mapper
+            if np.issubdtype(dataframe[key].dtype, np.float):
+                mappers[key] = ContinuousMapper(dataframe[key])
+            else:
+                mappers[key] = ObjectMapper(dataframe[key])
 
     return mappers
 
@@ -99,7 +111,7 @@ def entrofy(dataframe, n,
 
     # Build a dummy mappers array
     if mappers is None:
-            mappers = _construct_mappers(dataframe, weights)
+            mappers = construct_mappers(dataframe, weights)
 
     # Compute binary array from the dataframe
     # Build a mapping of columns to probabilities and weights

@@ -148,7 +148,7 @@ class ContinuousMapper(BaseMapper):
 
     """
 
-    def __init__(self, column, n_out=2, boundaries=None, targets=None,
+    def __init__(self, column, n_out=3, boundaries=None, targets=None,
                  column_names=None, prefix=""):
         """
         This class maps continuous values into a set of `n_out` discrete bins.
@@ -203,7 +203,7 @@ class ContinuousMapper(BaseMapper):
         # assert that the keys in `targets` are the same as the column names.
         if targets is not None:
             assert [c == t for c,t  in zip(np.sort(column_names),
-                                           np.sort(targets.keys()))]
+                                           np.sort(list(targets.keys())))]
 
         # empty target dictionary
         self.targets = {}
