@@ -6,6 +6,7 @@ import pandas as pd
 import seaborn as sns
 
 from entrofy.mappers import ObjectMapper, ContinuousMapper
+from entrofy.core import _construct_mappers
 
 
 __all__ = ["plot", "plot_fractions", "plot_correlation", "plot_distribution"]
@@ -411,7 +412,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
         x_keys = np.sort(xmapper.targets.keys())
     elif xtype == "continuous":
         if xmapper is None:
-            xmapper = ContinuousMapper(df[xlabel], n_out=n_out)
+            xmapper = ContinuousMapper(df[xlabel], n_out=4)
         x_fields = None
         x_keys = xlabel
     else:
@@ -424,13 +425,12 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
         y_keys = np.sort(ymapper.targets.keys())
     elif ytype == "continuous":
         if ymapper is None:
-            ymapper = ContinuousMapper(df[ylabel], n_out=n_out)
+            ymapper = ContinuousMapper(df[ylabel], n_out=4)
         y_fields = None
         y_keys = ylabel
 
     if (xtype == "categorical") & (ytype == "categorical"):
         ax = _plot_categorical(df, xlabel, ylabel,
-                               x_fields, y_fields,
                                x_keys, y_keys, prefac,
                                ax, cmap, s)
 
@@ -445,7 +445,6 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
             df_temp = pd.DataFrame([df[xlabel], cat_column]).transpose()
 
             ax = _plot_categorical(df_temp, xlabel, ylabel,
-                                   x_fields, y_fields,
                                    x_keys, y_keys, prefac,
                                    ax, cmap)
         else:
@@ -518,7 +517,6 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
     ax : matplotlib.Axes object
         The same matplotlib.Axes object for further manipulation
 
-
     """
 
     if xmapper is None:
@@ -552,3 +550,100 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
         plt.ylabel("Number of occurrences")
 
     return c
+
+def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", nbins=30,
+                  prefac=10., cat_type="box", cont_type="hist"):
+    """
+    Make a triangle plot of all the relevant columns in the DataFrame.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        A pandas DataFrame with the data
+
+    weights : optional, dict {column: float}
+        Weighting over dataframe columns
+        By default, a uniform weighting is used
+
+    mappers : optional, dict {column: entrofy.BaseMapper}
+        Dictionary mapping dataframe columns to BaseMapper objects
+
+    cmap : matplotlib.cm.colormap
+        A matplotlib colormap to use for shading the bubbles
+
+    nbins : int
+        The number of bins for the histogram.
+
+    prefac : float
+        A pre-factor steering the shading of the bubbles
+
+    cat_type : {"box" | "strip" | "swarm" | "violin" | "categorical"}
+        The type of plot for any plot including both categorical and continuous
+        data.
+
+    cont_type : {"kde" | "scatter"}
+        The type of plot to produce. Either a kernel density estimate ("kde")
+        or a scatter plor ("scatter").
+
+    Returns
+    -------
+    fig : matplotlib.Figure object
+        The Figure object
+
+    axes : list
+        A list of matplotlib.Axes objects
+
+    """
+
+    # if mappers are None, construct them with some default settings
+    if mappers is None:
+        mappers = _construct_mappers(df, weights)
+
+    # the keys
+    keys = np.sort(mappers.keys())
+
+    # the number of panels I'll need
+    nkeys = len(keys)
+
+    # determine the types:
+    all_types = []
+    for k in keys:
+        all_types.append(_check_data_type(df[k]))
+
+    # construct the figure
+    fig, axes = plt.subplots(nkeys, nkeys, figsize=(4*nkeys, 3*nkeys))
+
+    for i, kx in enumerate(keys):
+        for j, ky in enumerate(keys):
+            xtype = all_types[i]
+            ytype = all_types[j]
+
+            # lower triangle: print white space
+            if i > j:
+                axes[i,j].spines['right'].set_visible(False)
+                axes[i,j].spines['top'].set_visible(False)
+                axes[i,j].spines['left'].set_visible(False)
+                axes[i,j].spines['bottom'].set_visible(False)
+                axes[i,j].set_axis_bgcolor('white')
+                axes[i,j].set_xlabel("")
+                axes[i,j].set_ylabel("")
+                axes[i,j].axis('off')
+
+            # diagonal: plot the univariate distribution
+            elif i == j:
+                axes[i,j] = plot_distribution(df, kx, xmapper=mappers[kx],
+                                              xtype=xtype, ax=axes[i,j],
+                                              cmap=cmap, nbins=nbins)
+
+            # upper triangle: plot the bivariate distributions
+            else:
+                axes[i,j] = plot_correlation(df, kx, ky, xmapper=mappers[kx],
+                                             ymapper=mappers[ky], ax=axes[i,j],
+                                             cmap=cmap, xtype=xtype,
+                                             ytype=ytype, prefac=prefac,
+                                             cat_type=cat_type,
+                                             cont_type=cont_type)
+
+    plt.tight_layout()
+
+    return fig, axes
