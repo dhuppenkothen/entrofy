@@ -209,13 +209,12 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01):
 
         # Compute marginal gain for each candidate
         delta = __objective(p_new, w, q) - __objective(p, w, q)
-
         # Knock out the points we've already taken
         delta[y] = -np.inf
 
         # Select the top score.  Break near-ties randomly.
         delta_real = delta[np.isfinite(delta)]
-        target_score = np.percentile(delta_real, 1.0-quantile)
+        target_score = np.percentile(delta_real, 100 * (1.0-quantile))
 
         new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
