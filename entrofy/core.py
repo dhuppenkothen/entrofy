@@ -378,10 +378,9 @@ def load(filename, dataframe=None):
         from the previous entrofy run.
     """
 
-    f = open(filename, 'r')
-    state = pickle.load(f)
-    f.close()
-
+    with open(filename, 'r') as f:
+        state = pickle.load(f)
+    
     data_types = state["data_types"]
     boundaries = state["boundaries"]
     targets = state["targets"]
