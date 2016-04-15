@@ -92,7 +92,7 @@ def plot_fractions(column, idx, key, mapper, ax = None):
     summary = pd.concat([full_summary, selected_summary])
 
     # sort data frames by relevant keyword in alphabetical order
-    summary = summary.sort(key)
+    summary = summary.sort_values(by=key)
 
     # find all unique labels
     unique_labels = len(full_summary.index)
@@ -575,7 +575,7 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
         summary = _make_counts_summary(df[xlabel], xlabel,
                                        xmapper, datatype="all")
 
-        summary = summary.sort(xlabel)
+        summary = summary.sort_values(by=xlabel)
 
         #make figure
         sns.barplot(x=xlabel, y="counts", data=summary, ax=ax, color=c)
