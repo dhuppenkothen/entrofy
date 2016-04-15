@@ -139,11 +139,14 @@ def entrofy(dataframe, n,
         target_prob[i] = all_probabilities[key]
         target_weight[i] = all_weights[key]
 
+    # Convert the pre-select index into row numbers
+    pre_selects_i = df_binary.index.get_loc(pre_selects)
+
     # Run the specified number of randomized trials
     results = [__entrofy(df_binary.values, n, rng,
                          w=target_weight,
                          q=target_prob,
-                         pre_selects=pre_selects,
+                         pre_selects=pre_selects_i,
                          quantile=quantile,
                          alpha=alpha)
                for _ in range(n_trials)]
