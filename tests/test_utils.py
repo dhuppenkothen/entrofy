@@ -1,7 +1,7 @@
 import numpy as np
 
 from nose.tools import raises, eq_
-
+import pandas as pd
 import entrofy
 
 class TestRandomState(object):
@@ -44,3 +44,41 @@ class TestRandomState(object):
     @raises(ValueError)
     def test_with_bad_seed(self):
         entrofy.utils.check_random_state('nick cave')
+
+
+class TestCheckProbabilities(object):
+
+    def setUp(self):
+        np.random.seed(20160411)
+
+        self.species = ['orc', 'elf', 'dwarf', 'hobbit', 'human']
+        self.probs = [0.5, 0.25, 0.125, 0.0625, 0.0625]
+        values = np.random.choice(self.species, size=300, p=self.probs)
+
+        self.df = pd.DataFrame(values, columns=["species"], dtype=str)
+        # add some NaN values to the data set
+        for i in np.random.randint(0, len(self.df.index), size=10):
+            self.df["species"][i] = None
+
+    def test_good_mapper_total(self):
+        m = entrofy.mappers.ObjectMapper(self.df['species'])
+        entrofy.core._check_probabilities(m)
+
+    def test_good_mapper_subtotal(self):
+        m = entrofy.mappers.ObjectMapper(self.df['species'])
+        m.targets['orc'] /= 2.0
+        entrofy.core._check_probabilities(m)
+
+
+    @raises(RuntimeError)
+    def test_negative_mapper(self):
+        m = entrofy.mappers.ObjectMapper(self.df['species'])
+        m.targets['orc'] = -10
+        entrofy.core._check_probabilities(m)
+
+    @raises(RuntimeError)
+    def test_negative_mapper(self):
+        m = entrofy.mappers.ObjectMapper(self.df['species'])
+        m.targets['orc'] = 1.2
+        entrofy.core._check_probabilities(m)
+

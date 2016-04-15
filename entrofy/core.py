@@ -12,6 +12,29 @@ from .utils import check_random_state
 
 __all__ = ['entrofy', 'construct_mappers']
 
+def _check_probabilities(mapper):
+    '''Verify that the target probabilities for a mapper sum to at most 1.
+
+    Parameters
+    ----------
+    mapper : entrofy.mappers.BaseMapper
+
+    Raises
+    ------
+    RuntimeError
+        if target probabilities are ill-formed
+    '''
+
+    score = 0.0
+
+    for p in six.itervalues(mapper.targets):
+        if p < 0:
+            raise RuntimeError('{} target probability {} < 0'.format(mapper, p))
+        score += p
+
+    if score > 1:
+        raise RuntimeError('{} total target probability {} > 0'.format(mapper, score))
+
 
 def construct_mappers(dataframe, weights, datatypes=None):
     mappers = {}
@@ -125,6 +148,8 @@ def entrofy(dataframe, n,
     for key, mapper in six.iteritems(mappers):
         if key not in weights:
             continue
+
+        _check_probabilities(mapper)
         new_df = mapper.transform(dataframe[key])
         df_binary = df_binary.join(new_df)
         all_weights.update({k: weights[key] for k in new_df.columns})
