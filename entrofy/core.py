@@ -155,7 +155,7 @@ def entrofy(dataframe, n,
             max_score = score
             best = solution
 
-    return dataframe.index[best], max_score, mappers
+    return dataframe.index[best], max_score
 
 
 def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5):
