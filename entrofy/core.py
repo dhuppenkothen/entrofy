@@ -11,7 +11,7 @@ import pickle
 from .mappers import ContinuousMapper, ObjectMapper
 from .utils import check_random_state
 
-__all__ = ['entrofy', 'construct_mappers']
+__all__ = ['entrofy', 'construct_mappers', 'save', 'load']
 
 
 def construct_mappers(dataframe, weights, datatypes=None):
@@ -239,7 +239,7 @@ def save(idx, filename,
          weights=None,
          pre_selects=None,
          opt_outs=None,
-         quantile=0.1,
+         quantile=1e-2,
          n_trials=15,
          seed=None,
          alpha=0.5):
@@ -295,22 +295,36 @@ def save(idx, filename,
         Scaling exponent for the objective function.
 
     """
-    state = {"index": idx, "mappers": mappers,
-             "weights": weights, "pre_selects": pre_selects,
-             "opt_outs": opt_outs, "quantile":quantile,
-             "n_trials":n_trials, "seed": seed, "alpha": alpha}
+
+    data_types, targets, boundaries, prefixes = {}, {}, {}, {}
+    for key in mappers:
+        targets[key] = mappers[key].targets
+        prefixes[key] = mappers[key].prefix
+        if isinstance(mappers[key], ObjectMapper):
+            data_types[key] = "categorical"
+        elif isinstance(mappers[key], ContinuousMapper):
+            data_types[key] = "continuous"
+            boundaries[key] = mappers[key].boundaries
+        else:
+            raise TypeError("Type of mapper not recognized!")
+
+
+    state = {"index": idx, "targets": targets, "data_types":data_types,
+             "boundaries": boundaries, "weights": weights,
+             "pre_selects": pre_selects, "opt_outs": opt_outs,
+             "quantile":quantile, "n_trials":n_trials, "seed": seed,
+             "alpha": alpha}
 
     if dataframe is not None:
         state["dataframe"] = dataframe
 
-    f = open(filename, "w")
-    pickle.dump(state, f)
-    f.close()
+    with open(filename, "w") as fdesc:
+        pickle.dump(state, fdesc)
 
     return
 
 
-def load(filename):
+def load(filename, dataframe=None):
     """
     Load a previous run from disk.
 
@@ -318,6 +332,10 @@ def load(filename):
     ----------
     filename : str
         The name of the file to which the entrofy run has been previously saved.
+
+    dataframe : pandas.DataFrame
+        If the data has not been stored with the entrofy run, it needs to be
+        passed for reconstruction of the mappers.
 
     Returns
     -------
@@ -333,6 +351,31 @@ def load(filename):
     f = open(filename, 'r')
     state = pickle.load(f)
     f.close()
+
+    data_types = state["data_types"]
+    boundaries = state["boundaries"]
+    targets = state["targets"]
+
+    mappers = {}
+    for key in targets:
+        n_out = len(list(targets[key].keys()))
+        if data_types[key] == "continuous":
+            column_names = list(targets[key].keys())
+            mappers[key] = ContinuousMapper(dataframe[key], n_out=n_out,
+                                            boundaries=boundaries[key],
+                                            targets=targets[key],
+                                            column_names=column_names)
+
+        elif data_types[key] == "categorical":
+            mappers[key] = ObjectMapper(dataframe[key], n_out=n_out,
+                                        targets=targets[key])
+
+
+    state["mappers"] = mappers
+
+    del state["data_types"]
+    del state["boundaries"]
+    del state["targets"]
 
     return state
 

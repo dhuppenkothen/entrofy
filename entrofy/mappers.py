@@ -119,6 +119,8 @@ class ObjectMapper(BaseMapper):
             An optional pre-computed target dictionary.
             If provided, then `n_out` and `prefix` are ignored.
         '''
+        self.prefix = prefix
+
         if targets is not None:
             self.targets = targets
             self._map = {v: equal_maker(v) for v in targets}
