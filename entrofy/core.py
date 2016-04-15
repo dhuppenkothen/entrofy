@@ -141,7 +141,7 @@ def entrofy(dataframe, n,
     # Convert the pre-select index into row numbers
     pre_selects_i = None
     if pre_selects is not None:
-        pre_selects_i = df_binary.index.get_loc(pre_selects)
+        pre_selects_i = [df_binary.index.get_loc(_) for _ in pre_selects]
 
     # Run the specified number of randomized trials
     results = [__entrofy(df_binary.values, n, rng,
