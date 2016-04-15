@@ -6,11 +6,12 @@ import numpy as np
 import pandas as pd
 import six
 import warnings
+import pickle
 
 from .mappers import ContinuousMapper, ObjectMapper
 from .utils import check_random_state
 
-__all__ = ['entrofy', 'construct_mappers']
+__all__ = ['entrofy', 'construct_mappers', 'save', 'load']
 
 def _check_probabilities(mapper):
     '''Verify that the target probabilities for a mapper sum to at most 1.
@@ -260,3 +261,151 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
 
 def __objective(p, w, q, alpha=0.5):
     return ((np.minimum(q, p))**(alpha)).dot(w)
+
+
+def save(idx, filename,
+         dataframe=None,
+         mappers=None,
+         weights=None,
+         pre_selects=None,
+         opt_outs=None,
+         quantile=1e-2,
+         n_trials=15,
+         seed=None,
+         alpha=0.5):
+
+    """
+    Save an Entrofy run to disk.
+    The data will be saved in a pickle file containing a dictionary with
+    "par":object pairs, where "par" refers to the parameters defined below.
+
+    If the default values had been used for the entrofy run, most of these
+    can be left at their defaults here, too.
+
+    Parameters
+    ----------
+    idx : iterable
+        The indices of selected participants returned by `entrofy`.
+
+    filename : str
+        The file name to save the run to.
+
+    dataframe : pd.DataFrame
+        Rows are participants, and columns are attributes.
+
+    mappers : optional, dict {column: entrofy.BaseMapper}
+        Dictionary mapping dataframe columns to BaseMapper objects
+
+    weights : optional, dict {column: float}
+        Weighting over dataframe columns
+
+    pre_selects : None or iterable
+        Optionally, you may pre-specify a set of rows to be forced into the
+        solution.
+        Values must be valid indices for dataframe.
+
+    opt-out : None or iterable
+        Optionally, you may pre-specify a set of rows to be ignored when
+        searching for a solution.
+        Values must be valid indices for dataframe.
+
+    quantile : float, values in [0,1]
+        Define the quantile to be used in tie-breaking between top choices at
+        every step; choose e.g. 0.01 for the top 1% quantile
+        By default, 0.01
+
+    n_trials : int > 0
+        If pre_selects is None, run `n_trials` random initializations and return
+        the solution with the best objective value.
+
+    seed : [optional] int or numpy.random.RandomState
+        An optional seed or random number state.
+
+    alpha : float in (0, 1]
+        Scaling exponent for the objective function.
+
+    """
+
+    data_types, targets, boundaries, prefixes = {}, {}, {}, {}
+    for key in mappers:
+        targets[key] = mappers[key].targets
+        prefixes[key] = mappers[key].prefix
+        if isinstance(mappers[key], ObjectMapper):
+            data_types[key] = "categorical"
+        elif isinstance(mappers[key], ContinuousMapper):
+            data_types[key] = "continuous"
+            boundaries[key] = mappers[key].boundaries
+        else:
+            raise TypeError("Type of mapper not recognized!")
+
+
+    state = {"index": idx, "targets": targets, "data_types":data_types,
+             "boundaries": boundaries, "weights": weights,
+             "pre_selects": pre_selects, "opt_outs": opt_outs,
+             "quantile":quantile, "n_trials":n_trials, "seed": seed,
+             "alpha": alpha}
+
+    if dataframe is not None:
+        state["dataframe"] = dataframe
+
+    with open(filename, "w") as fdesc:
+        pickle.dump(state, fdesc)
+
+    return
+
+
+def load(filename, dataframe=None):
+    """
+    Load a previous run from disk.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the file to which the entrofy run has been previously saved.
+
+    dataframe : pandas.DataFrame
+        If the data has not been stored with the entrofy run, it needs to be
+        passed for reconstruction of the mappers.
+
+    Returns
+    -------
+    state : dict, "par": obj
+        A dictionary with the state of an entrofy run. Dictionary keywords
+        correspond to the input parameters to `entrofy`, with two exceptions:
+        (1) saving the input DataFrame is optional, hence if it has not been
+        saved, it will not be present in the dictionary. (2) The dictionary also
+        contains an iterable `idx` with the indices of the selected participants
+        from the previous entrofy run.
+    """
+
+    with open(filename, 'r') as f:
+        state = pickle.load(f)
+    
+    data_types = state["data_types"]
+    boundaries = state["boundaries"]
+    targets = state["targets"]
+
+    mappers = {}
+    for key in targets:
+        n_out = len(list(targets[key].keys()))
+        if data_types[key] == "continuous":
+            column_names = list(targets[key].keys())
+            mappers[key] = ContinuousMapper(dataframe[key], n_out=n_out,
+                                            boundaries=boundaries[key],
+                                            targets=targets[key],
+                                            column_names=column_names)
+
+        elif data_types[key] == "categorical":
+            mappers[key] = ObjectMapper(dataframe[key], n_out=n_out,
+                                        targets=targets[key])
+
+
+    state["mappers"] = mappers
+
+    del state["data_types"]
+    del state["boundaries"]
+    del state["targets"]
+
+    return state
+
+
