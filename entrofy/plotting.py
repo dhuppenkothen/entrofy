@@ -1,5 +1,6 @@
 from __future__ import division
 import matplotlib.pyplot as plt
+import matplotlib
 
 import numpy as np
 import pandas as pd
@@ -152,7 +153,6 @@ def plot(df, idx, weights, mappers=None, cols=4):
     axes = []
 
     for i,c in enumerate(columns):
-        print("i: " + str(i))
         ax = fig.add_subplot(rows, cols, i+1)
         ax, _ = plot_fractions(df[c], idx, c, mappers[c], ax=ax)
         axes.append(ax)
@@ -255,8 +255,8 @@ def _convert_continuous_to_categorical(column, mapper):
     return cat_column
 
 
-def _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
-                                     n_cat=5, plottype="box"):
+def _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys, y_keys, ax,
+                                     cmap, n_cat=5, plottype="box"):
     """
     Plot a categorical variable and a continuous variable against each
     other. Types of plots include box plot, violin plot, strip plot and swarm
@@ -291,18 +291,25 @@ def _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
         The same matplotlib.Axes object for further manipulation
 
     """
+    if x_keys is xlabel:
+        keys = y_keys
+    elif y_keys is ylabel:
+        keys = x_keys
+    else:
+        raise Exception("Something went terribly, horribly wrong!")
+
     current_palette = sns.color_palette(cmap, n_cat)
     if plottype == "box":
-        sns.boxplot(x=xlabel, y=ylabel, data=df,
+        sns.boxplot(x=xlabel, y=ylabel, data=df, order=keys,
                     palette=current_palette, ax=ax)
     elif plottype == "strip":
-        sns.stripplot(x=xlabel, y=ylabel, data=df,
+        sns.stripplot(x=xlabel, y=ylabel, data=df, order=keys,
                       palette=current_palette, ax=ax)
     elif plottype == "swarm":
-        sns.swarmplot(x=xlabel, y=ylabel, data=df,
+        sns.swarmplot(x=xlabel, y=ylabel, data=df, order=keys,
                       palette=current_palette, ax=ax)
     elif plottype == "violin":
-        sns.violinplot(x=xlabel, y=ylabel, data=df,
+        sns.violinplot(x=xlabel, y=ylabel, data=df, order=keys,
                        palette=current_palette, ax=ax)
     else:
         raise Exception("plottype not recognized!")
@@ -481,8 +488,8 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
                                    x_keys, y_keys, prefac,
                                    ax, cmap)
         else:
-            ax = _plot_categorical_and_continuous(df, xlabel, ylabel,
-                                                  ax, cmap, n_cat=n_cat,
+            ax = _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys,
+                                                  y_keys, ax, cmap, n_cat=n_cat,
                                                   plottype=cat_type)
 
     elif ((xtype == "continuous") & (ytype == "categorical")):
@@ -501,7 +508,8 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
                                    x_keys, y_keys, prefac, ax, cmap)
 
         else:
-            ax = _plot_categorical_and_continuous(df, xlabel, ylabel, ax, cmap,
+            ax = _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys,
+                                                  y_keys, ax, cmap,
                                                   n_cat=n_cat,
                                                   plottype=cat_type)
 
@@ -581,11 +589,11 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
         ax.set_xlabel(xlabel)
         plt.ylabel("Number of occurrences")
 
-    return c
+    return ax
 
 
 def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
-                  prefac=10., cat_type="box", cont_type="hist"):
+                  prefac=10., cat_type="box", cont_type="hist", fig=None):
     """
     Make a triangle plot of all the relevant columns in the DataFrame.
 
@@ -617,6 +625,9 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
     cont_type : {"kde" | "scatter"}
         The type of plot to produce. Either a kernel density estimate ("kde")
         or a scatter plor ("scatter").
+
+    fig : matplotlib.Figure object
+        A Figure object to plot in.
 
     Returns
     -------
@@ -650,15 +661,26 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
             raise Exception("Data type not recognized!")
 
     # construct the figure
-    fig, axes = plt.subplots(nkeys, nkeys, figsize=(4*nkeys, 3*nkeys))
+    if fig is None:
+        fig, axes = plt.subplots(nkeys, nkeys, figsize=(4*nkeys, 3*nkeys))
+
+    else:
+        axes = []
+        k = 1
+        for i in range(nkeys):
+            for j in range(nkeys):
+                axes.append(fig.add_subplot(nkeys, nkeys, k))
+                k += 1
+
+    axes = np.array(axes).reshape((nkeys, nkeys))
 
     for i, kx in enumerate(keys):
         for j, ky in enumerate(keys):
             xtype = all_types[i]
             ytype = all_types[j]
 
-            # lower triangle: print white space
-            if i > j:
+            # upper triangle: print white space
+            if i < j:
                 axes[i,j].spines['right'].set_visible(False)
                 axes[i,j].spines['top'].set_visible(False)
                 axes[i,j].spines['left'].set_visible(False)
@@ -667,6 +689,7 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
                 axes[i,j].set_xlabel("")
                 axes[i,j].set_ylabel("")
                 axes[i,j].axis('off')
+                continue
 
             # diagonal: plot the univariate distribution
             elif i == j:
@@ -682,6 +705,16 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
                                              ytype=xtype, prefac=prefac,
                                              cat_type=cat_type,
                                              cont_type=cont_type)
+            if i < nkeys - 1:
+                axes[i,j].set_xticklabels([])
+                axes[i,j].set_xlabel("")
+            else:
+                [l.set_rotation(45) for l in axes[i,j].get_xticklabels()]
+
+            if j > 0:
+                axes[i,j].set_yticklabels([])
+                if i != j:
+                    axes[i,j].set_ylabel("")
 
     plt.tight_layout()
 
