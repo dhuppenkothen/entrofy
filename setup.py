@@ -27,7 +27,7 @@ setup(
     ],
     license='ISC',
     install_requires=[
-        'pandas>=0.16',
+        'pandas>=0.18',
         'numpy>=1.10',
         'seaborn>=0.6.0',
         'matplotlib>=1.4.3'

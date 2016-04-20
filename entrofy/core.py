@@ -43,9 +43,6 @@ def construct_mappers(dataframe, weights, datatypes=None):
     # Populate any missing mappres
     for key in weights:
 
-        if weights[key] == 0 or key in mappers:
-            continue
-
         # if datatypes is a dictionary describing the type of
         # data, use the relevant mapper:
         if datatypes is not None:
@@ -128,6 +125,7 @@ def entrofy(dataframe, n,
     '''
 
     rng = check_random_state(seed)
+    print(rng)
 
     # Drop the opt-outs
     if opt_outs is not None:
