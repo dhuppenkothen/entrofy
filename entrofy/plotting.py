@@ -112,7 +112,7 @@ def plot_fractions(column, idx, key, mapper, ax = None):
     return ax, summary
 
 
-def plot(df, idx, weights, mappers=None, cols=4):
+def plot(df, idx, weights=None, mappers=None, cols=4):
     """
     Plot bar plots for all columns in the DataFrame.
 

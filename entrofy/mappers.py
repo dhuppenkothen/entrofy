@@ -4,6 +4,7 @@
 
 import numpy as np
 import pandas as pd
+import six 
 
 __all__ = ['ObjectMapper', 'BaseMapper', 'ContinuousMapper']
 
@@ -83,11 +84,18 @@ class BaseMapper(object):
         nonnulls = ~column.isnull()
 
         for key in self._map:
-            df[key][nonnulls] = column[nonnulls].apply(self._map[key])
-            df[key][~nonnulls] = None
+            df['{}{}'.format(self.prefix, key)][nonnulls] = column[nonnulls].apply(self._map[key])
+            df['{}{}'.format(self.prefix, key)][~nonnulls] = None
 
         return df
 
+    def _prepend_prefix(self, targets, prefix):
+        new_targets = {}
+        for key, t in six.iteritems(targets):
+            new_key = '{}{}'.format(prefix, key)
+            new_targets[new_key] = t
+
+        return new_targets
 
 class ObjectMapper(BaseMapper):
     '''A generic object-mapper.
@@ -122,7 +130,7 @@ class ObjectMapper(BaseMapper):
         self.prefix = prefix
 
         if targets is not None:
-            self.targets = targets
+            self.targets = self._prepend_prefix(targets, prefix)
             self._map = {v: equal_maker(v) for v in targets}
         else:
             # 1. determine unique values
