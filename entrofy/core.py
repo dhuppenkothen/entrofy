@@ -125,7 +125,6 @@ def entrofy(dataframe, n,
     '''
 
     rng = check_random_state(seed)
-    print(rng)
 
     # Drop the opt-outs
     if opt_outs is not None:

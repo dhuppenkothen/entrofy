@@ -89,10 +89,10 @@ class BaseMapper(object):
 
         return df
 
-    def _prepend_prefix(self, targets, prefix):
+    def _prepend_prefix(self, targets):
         new_targets = {}
         for key, t in six.iteritems(targets):
-            new_key = '{}{}'.format(prefix, key)
+            new_key = '{}{}'.format(self.prefix, key)
             new_targets[new_key] = t
 
         return new_targets
@@ -130,7 +130,7 @@ class ObjectMapper(BaseMapper):
         self.prefix = prefix
 
         if targets is not None:
-            self.targets = self._prepend_prefix(targets, prefix)
+            self.targets = self._prepend_prefix(targets)
             self._map = {v: equal_maker(v) for v in targets}
         else:
             # 1. determine unique values
