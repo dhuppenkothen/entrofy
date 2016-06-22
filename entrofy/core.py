@@ -2,11 +2,12 @@
 # -*- encoding: utf-8 -*-
 '''Entrofy core optimization routines'''
 
+import warnings
+import pickle
+
 import numpy as np
 import pandas as pd
 import six
-import warnings
-import pickle
 
 from .mappers import ContinuousMapper, ObjectMapper
 from .utils import check_random_state
@@ -38,6 +39,26 @@ def _check_probabilities(mapper):
 
 
 def construct_mappers(dataframe, weights, datatypes=None):
+    '''Construct mappers from a dataframe
+
+    Parameters
+    ----------
+    dataframe : pandas.DataFrame
+        The input data frame.  Each column corresponds to an attribute
+
+    weights : dict
+        `weights[key]` should be a positive number corresponding to the
+        importance of `key`, where `key` is a column of `dataframe`.
+
+    datatypes : dict
+        `datatypes[key]` indicates whether `dataframe[key]` should be
+        interpreted as "categorical" or "continuous"
+
+    Returns
+    -------
+    mappers : dict
+        `mappers[key]` is a `Mapper` object for column `dataframe[key]`.
+    '''
     mappers = {}
 
     # Populate any missing mappres
@@ -63,15 +84,9 @@ def construct_mappers(dataframe, weights, datatypes=None):
 
     return mappers
 
-def entrofy(dataframe, n,
-            mappers=None,
-            weights=None,
-            pre_selects=None,
-            opt_outs=None,
-            quantile=0.01,
-            n_trials=15,
-            seed=None,
-            alpha=0.5):
+
+def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
+            opt_outs=None, quantile=0.01, n_trials=15, seed=None, alpha=0.5):
     '''Entrofy your panel.
 
     Parameters
@@ -125,6 +140,19 @@ def entrofy(dataframe, n,
     '''
 
     rng = check_random_state(seed)
+
+
+    # Validate n_trials
+    if n_trials <= 0 or n_trials != int(n_trials):
+        raise ValueError('n_trials={} must be a positive integer'.format(n_trials))
+
+    # Validate quantiles
+    if not 0 <= quantile <= 1.0 or not isinstance(quantile, float):
+        raise ValueError('quantile={:.2f} must be in the range [0, 1]'.format(quantile))
+
+    # Validate alpha
+    if not 0 < alpha <= 1.0 or not isinstance(alpha, float):
+        raise ValueError('alpha={:.2f} must be in the range (0, 1]'.format(alpha))
 
     # Drop the opt-outs
     if opt_outs is not None:
@@ -257,20 +285,13 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
 
 
 def __objective(p, w, q, alpha=0.5):
+    '''Compute the objective value of a solution.'''
     return ((np.minimum(q, p))**(alpha)).dot(w)
 
 
-def save(idx, filename,
-         dataframe=None,
-         mappers=None,
-         weights=None,
-         pre_selects=None,
-         opt_outs=None,
-         quantile=1e-2,
-         n_trials=15,
-         seed=None,
-         alpha=0.5):
-
+def save(idx, filename, dataframe=None, mappers=None, weights=None,
+         pre_selects=None, opt_outs=None, quantile=1e-2, n_trials=15,
+         seed=None, alpha=0.5):
     """
     Save an Entrofy run to disk.
     The data will be saved in a pickle file containing a dictionary with
@@ -375,9 +396,9 @@ def load(filename, dataframe=None):
         from the previous entrofy run.
     """
 
-    with open(filename, 'r') as f:
-        state = pickle.load(f)
-    
+    with open(filename, 'r') as fdesc:
+        state = pickle.load(fdesc)
+
     data_types = state["data_types"]
     boundaries = state["boundaries"]
     targets = state["targets"]
@@ -404,5 +425,3 @@ def load(filename, dataframe=None):
     del state["targets"]
 
     return state
-
-
