@@ -2,6 +2,7 @@
 
 
 from __future__ import division
+import argparse 
 
 import numpy as np
 import pandas as pd
@@ -22,7 +23,6 @@ def binarize(df, mappers):
 
     all_probabilities = {}
     for key, mapper in six.iteritems(mappers):
-        print("key")
         new_df = mapper.transform(df[key])
         df_binary = df_binary.join(new_df)
         all_probabilities.update(mapper.targets)
@@ -78,10 +78,6 @@ def create_solution(probs, n_out):
         name = "Attribute %i"%(i+1)
         prefix = "attr%i"%(i+1)
 
-        print("name: " + str(name))
-        print("prefix: " + str(prefix))
-        print("probs: " + str(probs))
-        print("\n")
         p_pos = int(p*n_out)
         attr = ["Yes" for _ in range(p_pos)]
         attr.extend(["No" for _ in range(n_out-p_pos)])
@@ -176,9 +172,9 @@ def create_sim(p1, p2, y1, y2, n_out, n_random):
     return sample, mappers, max_score
 
 
-def run_experiments():
+def run_experiments(alpha):
 
-    alpha = [1./10., 1./4., 1./3., 0.5, 1.0]
+    #alpha = [1./10., 1./4., 1./3., 0.5, 1.0]
 
     n_out = [10, 20, 50, 80, 100, 200]
 
@@ -194,18 +190,18 @@ def run_experiments():
 
     nsims = 100
 
-    scores = np.zeros((len(alpha),
-                       len(n_out),
+    scores = np.zeros((len(n_out),
                        len(n_random),
                        len(target_1),
                        len(target_2),
                        len(random_1),
                        len(random_2),
-                       len(nsims)))
+                       nsims))
 
-    for i, a in enumerate(alpha):
-        for j, no in enumerate(n_out)
+    for j, no in enumerate(n_out):
+            print("I am running on n_out %i"%j)
             for k, nr in enumerate(n_random):
+                print("I am running on n_random %i"%k)
                 for l, p1 in enumerate(target_1):
                     for m, p2 in enumerate(target_2):
                         for n, y1 in enumerate(random_1):
@@ -218,10 +214,10 @@ def run_experiments():
                                         entrofy.core.entrofy(sim,
                                                              no,
                                                              mappers=sim_mappers,
-                                                             alpha=a,
+                                                             alpha=alpha,
                                                              n_trials=n_trials)
 
-                                    scores[i,j,k,l,m,n,o,p] = sim_max_score - max_score
+                                    scores[j,k,l,m,n,o,p] = sim_max_score - max_score
 
 
 
@@ -229,17 +225,21 @@ def run_experiments():
 
 
 def main():
-    scores = run_experiments()
+    scores = run_experiments(alpha)
 
-    with open("../tests/algorithm_exp.pkl", "w") as f:
+    with open("../tests/algorithm_exp_alpha=%.2f.pkl"%alpha, "w") as f:
         pickle.dump(scores, f)
 
 
     return
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-a", "--alpha", action="store", dest="alpha")
+    args = parser.parse_args()
+    alpha = np.float(args.alpha)
     main()
-
+ 
 
 
 
