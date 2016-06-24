@@ -147,7 +147,6 @@ def plot(df, idx, weights, mappers=None, cols=4):
     if (ncolumns % cols) > 0:
         rows += 1
 
-
     fig = plt.figure(figsize=(4*cols, 3*rows))
 
     axes = []
