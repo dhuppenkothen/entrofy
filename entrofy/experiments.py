@@ -38,7 +38,7 @@ def binarize(df, mappers):
     return df_binary.values, q, w
 
 
-def objective(X, w, q, alpha=0.5):
+def objective(X, w, q, alpha):
     """
     X : data
     w : list of weights
@@ -48,9 +48,9 @@ def objective(X, w, q, alpha=0.5):
     return ((np.minimum(q, X))**(alpha)).dot(w)
 
 
-def compute_objective(solution, mappers, probs):
+def compute_objective(solution, mappers, probs, alpha=0.5):
     X, q, w = binarize(solution, mappers)
-    return objective(np.nansum(X, axis=0), w, q, 0.5)
+    return objective(np.nansum(X, axis=0), w, q, alpha)
 
 def create_solution(probs, n_out):
     """
@@ -132,7 +132,7 @@ def create_sample(yrandom, n_random):
     return df
 
 
-def create_sim(p1, p2, y1, y2, n_out, n_random):
+def create_sim(p1, p2, y1, y2, n_out, n_random, alpha):
     """
     Create a simulation with 2 categories, each of which has
     2 attributes.
@@ -158,7 +158,7 @@ def create_sim(p1, p2, y1, y2, n_out, n_random):
     # pick a solution
     solution, mappers = create_solution([p1, p2], n_out)
 
-    max_score = compute_objective(solution, mappers, [p1, p2])
+    max_score = compute_objective(solution, mappers, [p1, p2], alpha)
 
     # pick random sample for confusion
     random_sample = create_sample([y1, y2], n_random)
@@ -174,10 +174,8 @@ def create_sim(p1, p2, y1, y2, n_out, n_random):
 
 def run_experiments(alpha):
 
-    #alpha = [1./10., 1./4., 1./3., 0.5, 1.0]
-
     n_out = [10, 20, 50, 80, 100, 200]
-
+    
     n_random = [1, 5, 10, 20, 50, 100, 200, 500, 1000]
 
     target_1 = [0.1, 0.2, 0.3, 0.4, 0.5]
@@ -208,7 +206,7 @@ def run_experiments(alpha):
                             for o, y2 in enumerate(random_2):
                                 for p in range(nsims):
                                     sim, sim_mappers, sim_max_score = \
-                                        create_sim(p1, p2, y1, y2, no, nr)
+                                        create_sim(p1, p2, y1, y2, no, nr, alpha)
 
                                     idx, max_score = \
                                         entrofy.core.entrofy(sim,
