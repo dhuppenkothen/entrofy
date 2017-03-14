@@ -77,7 +77,7 @@ class BaseMapper(object):
             A DataFrame with the same index as `column`, and one binary-valued
             column for each potential output.
         '''
-        new_columns =  sorted(['{}{}'.format(self.prefix, key) for key in self.targets.keys()])
+        new_columns =  sorted(['{}{}'.format(self.prefix, key) for key in self.targets])
         df = pd.DataFrame(index=column.index,
                           #columns=sorted(list(self.targets.keys())),
                           columns = new_columns,

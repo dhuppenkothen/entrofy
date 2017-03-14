@@ -179,7 +179,7 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
         new_df = mapper.transform(dataframe[key])
         df_binary = df_binary.join(new_df)
         all_weights.update({k: weights[key] for k in new_df.columns})
-        all_probabilities.update({'{}{}'.format(mapper.prefix, k):mapper.targets[k] for k in mapper.targets.keys()})
+        all_probabilities.update({'{}{}'.format(mapper.prefix, k):mapper.targets[k] for k in mapper.targets})
 
     # Construct the target probability vector and weight vector
     target_prob = np.empty(len(df_binary.columns))
