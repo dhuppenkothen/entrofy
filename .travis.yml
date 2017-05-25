@@ -1,6 +1,10 @@
-# sudo false implies containerized builds
 sudo: false
 
+cache:
+    directories:
+    - $HOME/env
+
+language: python
 
 notifications:
     email: false
@@ -10,10 +14,6 @@ python:
     - 3.4
     - 3.5
     - 3.6
-
-cache:
-    directories:
-    - $HOME/env
 
 before_install:
     - bash .travis_dependencies.sh
