@@ -45,7 +45,7 @@ First, collect data about the acceptable participants. This requires you to know
 ### Input CSV file format
 
 - header row required. no spaces in header names.
-- first column required to be a unique identifier. Either a unique numerical kep (anonymous) or full name.
+- first column required to be a unique identifier. Either a unique numerical key (anonymous) or full name.
 - each column is intrepreted as an attribute (e.g, gender) 
 - each field in a column is intrepreted as a value of the attribute
 - missing data should be left as empty strings
