@@ -7,6 +7,9 @@ Selection of participants for meetings as a discrete optimization problem.
 
 Given a list of participants with various "attributes" (e.g., gender, career stage, subfield, geography, years since PhD), the code finds the distribution of values within each attribute (e.g, male, female) and generate a subset that approximates target value distributions (e.g, 50% male/female, 30% junior, 30% non-US). The attributes and values are user determined and based on the data present in uploaded CSV file.
 
+**Important**: While a flask app exists in this repo, it is only a very rudimentary reference implementation of what we'd like an actual app to look like and _not fully functional_. Please use the Python code instead, as demonstrated in the tutorial Jupyter notebook, or contact us for advice.
+
+
 ## About
 
 This tool was born out of a very practical need: given that there are more applicants for a workshop than spaces, and given that  some constraints on a target mixture of participants, and perhaps some pre-selected participants (e.g. invited speakers), how can the set of participants be identified such that it meets the target mixture as much as possible?
