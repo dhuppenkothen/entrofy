@@ -79,15 +79,14 @@ class BaseMapper(object):
         '''
         new_columns =  sorted(['{}{}'.format(self.prefix, key) for key in self.targets])
         df = pd.DataFrame(index=column.index,
-                          #columns=sorted(list(self.targets.keys())),
                           columns = new_columns,
-                          dtype=float)
+                          dtype=np.float)
 
         nonnulls = ~column.isnull()
 
         for key in self._map:
-            df['{}{}'.format(self.prefix, key)][nonnulls] = column[nonnulls].apply(self._map[key])
-            df['{}{}'.format(self.prefix, key)][~nonnulls] = None
+            df.loc[nonnulls, '{}{}'.format(self.prefix, key)] = column[nonnulls].apply(self._map[key])
+            df.loc[~nonnulls, '{}{}'.format(self.prefix, key)] = None
 
         return df
 

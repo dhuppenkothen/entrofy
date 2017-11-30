@@ -3,7 +3,14 @@
 '''Entrofy core optimization routines'''
 
 import warnings
-import pickle
+try:
+    import cPickle as pickle
+    writetype = "w"
+    readtype = "r"
+except ImportError:
+    import pickle
+    writetype = "wb"
+    readtype = "rb"
 
 import numpy as np
 import pandas as pd
@@ -217,6 +224,7 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
     '''See entrofy() for documentation'''
 
     n_participants, n_attributes = X.shape
+    X = np.array(X, dtype=np.float)
 
     if w is None:
         w = np.ones(n_attributes)
@@ -366,7 +374,7 @@ def save(idx, filename, dataframe=None, mappers=None, weights=None,
     if dataframe is not None:
         state["dataframe"] = dataframe
 
-    with open(filename, "w") as fdesc:
+    with open(filename, writetype) as fdesc:
         pickle.dump(state, fdesc)
 
     return
@@ -396,7 +404,7 @@ def load(filename, dataframe=None):
         from the previous entrofy run.
     """
 
-    with open(filename, 'r') as fdesc:
+    with open(filename, readtype) as fdesc:
         state = pickle.load(fdesc)
 
     data_types = state["data_types"]

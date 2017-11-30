@@ -44,9 +44,9 @@ def _make_counts_summary(column, key, mapper, datatype="all"):
 
     """
     binary = mapper.transform(column)
-    describe = binary.describe()
+    s = binary.sum()
 
-    summary_data = np.array([describe.columns.values, describe.loc["mean"]]).T
+    summary_data = np.array([s.index, s/s.sum()]).T
     summary = pd.DataFrame(summary_data, columns=[key, "counts"])
     summary["type"] = [datatype for _ in range(len(summary.index))]
 
@@ -684,7 +684,7 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
                 axes[i,j].spines['top'].set_visible(False)
                 axes[i,j].spines['left'].set_visible(False)
                 axes[i,j].spines['bottom'].set_visible(False)
-                axes[i,j].set_axis_bgcolor('white')
+                axes[i,j].set_facecolor('white')
                 axes[i,j].set_xlabel("")
                 axes[i,j].set_ylabel("")
                 axes[i,j].axis('off')
