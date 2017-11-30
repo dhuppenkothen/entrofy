@@ -105,7 +105,7 @@ def plot_fractions(column, idx, key, mapper, ax = None):
     ax.set_ylabel("Fraction of sample")
 
     xticklabels = [x.get_text() for x in ax.get_xticklabels()]
-    xtick_new = xtick_new = [x.split("_")[1] if len(x.split("_"))>1 else x for x in xticklabels]
+    xtick_new = [x.split("_")[1] if len(x.split("_"))>1 else x for x in xticklabels]
     ax.set_xticklabels(xtick_new)
 
     # add targets
