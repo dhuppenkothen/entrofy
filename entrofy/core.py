@@ -214,7 +214,48 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
 
 
 def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5):
-    '''See entrofy() for documentation'''
+    '''Core entrofy function.
+
+    Parameters
+    ----------
+    X : numpy.ndarray
+        An array of dimensions (n_candidates, n_binarized_attributes), i.e. each row is a candidate, each column
+        is a binarized attribute.
+
+    k : int
+        The number of participants in the output set. This is the number of candidates to be selected and returned
+        by this function
+
+    w : numpy.ndarray
+        A 1-d array of length n_binarized_attributes, setting a weight for each binarized attribute such that different
+        categories can be differently weighted.
+
+    q : numpy.ndarray
+        A 1D array of length n_binarized_attributes, setting the target for each binarized attribute. The fraction of
+        selected partipants fulfilling this attribute should be close to this number.
+
+    pre_selects : numpy.ndarray
+        The list of preselected candidates; will just be inserted into the final output set
+
+    quantile : float (0,1)
+        At each step, the algorithm selects the top quantile of candidates who improve the overall objective, and
+        selected randomly between them. This parameter sets the quantile to use in that step.
+
+    alpha : float (0,1)
+        The curvature parameter for the objective function. If alpha < 1, the relative gains of adding a candidate
+        with an attribute in a specific category gets smaller the closer that category already is to its targets.
+        This is used to favour filling categories far away from their targets, sometimes at the expense of categories
+        already close to their targets.
+
+    Returns
+    -------
+
+    objective : float
+        The score of the objective function for the selected data set
+
+    y : numpy.ndarray
+        An array of length n_candidates, filled with boolean values indicating selected/not selected participants
+    '''
 
     n_participants, n_attributes = X.shape
 
