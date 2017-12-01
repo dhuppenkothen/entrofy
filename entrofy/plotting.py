@@ -104,6 +104,10 @@ def plot_fractions(column, idx, key, mapper, ax = None):
     sns.barplot(x=key, y="counts", hue="type", data=summary, ax=ax)
     ax.set_ylabel("Fraction of sample")
 
+    xticklabels = [x.get_text() for x in ax.get_xticklabels()]
+    xtick_new = [x.split("_")[1] if len(x.split("_"))>1 else x for x in xticklabels]
+    ax.set_xticklabels(xtick_new)
+
     # add targets
     for i,l in enumerate(np.sort(list(mapper.targets.keys()))):
         ax.hlines(mapper.targets[l], -0.5+i*1.0, 0.5+i*1.0, lw=2,
