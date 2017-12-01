@@ -131,7 +131,7 @@ class ObjectMapper(BaseMapper):
         self.prefix = prefix
 
         if targets is not None:
-            self.targets = self._prepend_prefix(targets)
+            self.targets = targets
             self._map = {v: equal_maker(v) for v in targets}
         else:
             # 1. determine unique values
