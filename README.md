@@ -46,7 +46,7 @@ then go to http://localhost:5000/ in your web browser
 ## Usage Instructions
 
 Below are some practical considerations.
-You can find a Jupyter notebook in this repository that will show how to run the code itself in more detail. For a recent example of how Entrofy was used in practice, see (the PyAstro 2017 participant selection repo)[https://github.com/dhuppenkothen/PyAstro17ParticipantSelection]. 
+You can find a Jupyter notebook in this repository that will show how to run the code itself in more detail. For a recent example of how Entrofy was used in practice, see [the PyAstro 2017 participant selection repo](https://github.com/dhuppenkothen/PyAstro17ParticipantSelection). 
 
 First, collect data about the acceptable participants. This requires you to know which criteria you actually care about when selecting participants. This will very strongly depend on the scope, the objective and format of your workshop or conference. 
 
