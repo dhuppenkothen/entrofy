@@ -195,7 +195,7 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
         pre_selects_i = [df_binary.index.get_loc(_) for _ in pre_selects]
 
     # Run the specified number of randomized trials
-    results = [__entrofy(df_binary.values, n, rng,
+    results = [__entrofy(df_binary.values.astype(float), n, rng,
                          w=target_weight,
                          q=target_prob,
                          pre_selects=pre_selects_i,
