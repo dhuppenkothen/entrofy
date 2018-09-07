@@ -77,7 +77,7 @@ def construct_mappers(dataframe, weights, datatypes=None):
         else:
             # If floating point, use a range mapper
             # Else: use an object mapper
-            if np.issubdtype(dataframe[key].dtype, np.float):
+            if np.issubdtype(dataframe[key].dtype, np.dtype(float).type):
                 mappers[key] = ContinuousMapper(dataframe[key])
             else:
                 mappers[key] = ObjectMapper(dataframe[key])
