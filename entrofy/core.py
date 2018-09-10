@@ -77,7 +77,7 @@ def construct_mappers(dataframe, weights, datatypes=None):
         else:
             # If floating point, use a range mapper
             # Else: use an object mapper
-            if np.issubdtype(dataframe[key].dtype, np.float):
+            if np.issubdtype(dataframe[key].dtype, np.dtype(float).type):
                 mappers[key] = ContinuousMapper(dataframe[key])
             else:
                 mappers[key] = ObjectMapper(dataframe[key])
@@ -195,7 +195,7 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
         pre_selects_i = [df_binary.index.get_loc(_) for _ in pre_selects]
 
     # Run the specified number of randomized trials
-    results = [__entrofy(df_binary.values, n, rng,
+    results = [__entrofy(df_binary.values.astype(float), n, rng,
                          w=target_weight,
                          q=target_prob,
                          pre_selects=pre_selects_i,
