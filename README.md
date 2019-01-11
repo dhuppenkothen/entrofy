@@ -1,4 +1,5 @@
 # entrofy
+
 Participant selection for workshops and conferences made easy.
 
 Selection of participants for meetings as a discrete optimization problem.
@@ -32,6 +33,25 @@ Note that this is explicitly not the same as a quota: the underlying algorithim 
 - Distribution of each value in subset
 
 ## Install Instructions
+
+# Installation updates Cband & Jphuong 01/10/2019
+1. Be sure conda environment has python2
+> python --version
+2. Activate environment
+> source activate py2 
+or
+> conda create py2 -n python=2.7
+then 
+> source activate py2 
+3. From entrofy/apps directory
+Edited to remove json, and configparser edited to lowercase.
+> pip install -r requirements.txt
+4. From entrofy folder
+python setup.py install
+5. In the command line used for source activate, spin up Jupyter Notebook
+> jupyter notebook  
+in other terminals, the default environment will spin up
+6. Open Jupyter Notebook, go to kernal drop down box, select python2 kernal. 
 
 **Note**: The app is under active development and requires updates before running reliably. As of now, it's not really usable. Use the Python library instead (see below).
 

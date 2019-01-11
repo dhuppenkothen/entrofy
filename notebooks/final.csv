@@ -1,0 +1,90 @@
+,first_name,last_name,country,academic_institution,gender_minor,race_minor,travel_grant,accepted
+0,anonymous,anonymous,USA,University of Washington,,,No,YES
+1,anonymous,anonymous,USA,University of Washington,Yes,Yes,Yes,YES
+2,anonymous,anonymous,India,IIT (ISM) DHANBAD,,,Yes,YES
+3,anonymous,anonymous,USA,University of Notre Dame,No,No,Yes,NO
+4,anonymous,anonymous,USA,Carnegie Mellon University,No,No,Yes,YES
+5,anonymous,anonymous,USA,University of Illinois at Urbana-Champaign,Yes,Yes,Yes,YES
+6,anonymous,anonymous,USA,University of Washington,Yes,No,No,YES
+7,anonymous,anonymous,USA,The Nature Conservancy,No,No,No,YES
+8,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+9,anonymous,anonymous,USA,Montana State University,No,No,No,YES
+10,anonymous,anonymous,India,Indian Institute of Technology (IIT-ISM),No,No,Yes,YES
+11,anonymous,anonymous,Israel,"The Institute of Earth Sciences, The Hebrew University of Jerusalem",No,No,No,YES
+12,anonymous,anonymous,India,Indian Institute of Technology (Indian School of Mines) Dhanbad,No,No,Yes,YES
+13,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+14,anonymous,anonymous,USA,New York University,Yes,No,Yes,YES
+15,anonymous,anonymous,USA,Private consultant - Sound GIS,Yes,No,No,YES
+16,anonymous,anonymous,USA,University of Washington,Yes,No,No,YES
+17,anonymous,anonymous,India,National Institute of Hydrology,No,No,Yes,NO
+18,anonymous,anonymous,India,National Institute of Hydrology,No,No,Yes,NO
+19,anonymous,anonymous,India,"INDIAN INSTITUTE OF TECHNOLOGY (INDIAN SCHOOL OF MINES), DHANBAD",No,No,Yes,NO
+20,anonymous,anonymous,USA,University of Washington,,,No,YES
+21,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+22,anonymous,anonymous,United Kingdom,King's College London,Yes,No,Yes,YES
+23,anonymous,anonymous,India,Banasthali University,No,No,Yes,NO
+24,anonymous,anonymous,India,Indian Institute of Technology (Indian School of Mines) Dhanbad,No,No,,YES
+25,anonymous,anonymous,USA,Oregon State University,Yes,Yes,Yes,YES
+26,anonymous,anonymous,USA,Moss Landing Marine Labs,Yes,Yes,No,YES
+27,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+28,anonymous,anonymous,USA,The University of Tennessee,,,Yes,NO
+29,anonymous,anonymous,United Kingdom,University College London,No,No,Yes,YES
+30,anonymous,anonymous,USA,University of Washington,,,No,NO
+31,anonymous,anonymous,USA,University of Washington,No,Yes,No,NO
+32,anonymous,anonymous,Norway,Norwegian University of Science and Technology,No,No,No,YES
+33,anonymous,anonymous,USA,College of Charleston,Yes,No,Yes,YES
+34,anonymous,anonymous,USA,Worcester Polytechnic Institute,Yes,Yes,Yes,YES
+35,anonymous,anonymous,USA,Worcester Polytechnic Institute,Yes,Yes,Yes,NO
+36,anonymous,anonymous,USA,The University of Texas at Austin,No,No,No,NO
+37,anonymous,anonymous,USA,University of Washington,Yes,Yes,No,YES
+38,anonymous,anonymous,USA,University of Washington,Yes,No,No,YES
+39,anonymous,anonymous,USA,,No,No,No,NO
+40,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+41,anonymous,anonymous,USA,University of Wisconsin - Madison,Yes,Yes,Yes,YES
+42,anonymous,anonymous,USA,Pacific Northwest National Laboratory,No,Yes,No,YES
+43,anonymous,anonymous,Mexico,Instituto Politecnico Nacional,Yes,No,Yes,NO
+44,anonymous,anonymous,USA,University of Utah,No,No,Yes,YES
+45,anonymous,anonymous,USA,Scripps Institution of Oceanography,,,No,NO
+46,anonymous,anonymous,USA,The University of Texas at Dallas,Yes,No,Yes,YES
+47,anonymous,anonymous,USA,University of Washington,Yes,Yes,No,YES
+48,anonymous,anonymous,USA,The University of Texas at Austin Institute for Geophysics,Yes,Yes,,YES
+49,anonymous,anonymous,USA,University of Washington,Yes,Yes,No,NO
+50,anonymous,anonymous,USA,University of Washington,,,No,NO
+51,anonymous,anonymous,USA,None,No,No,,YES
+52,anonymous,anonymous,USA,University of Washington,,,Yes,NO
+53,anonymous,anonymous,USA,University of Washington,No,Yes,,YES
+54,anonymous,anonymous,USA,University of Oregon,Yes,Yes,No,YES
+55,anonymous,anonymous,USA,,,,No,YES
+56,anonymous,anonymous,Australia,University of Tasmania,No,No,Yes,YES
+57,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+58,anonymous,anonymous,USA,University of Washington,Yes,Yes,No,YES
+59,anonymous,anonymous,USA,University of Washington,No,Yes,No,YES
+60,anonymous,anonymous,USA,University of Washington,Yes,No,No,YES
+61,anonymous,anonymous,USA,Montana State University,No,No,No,YES
+62,anonymous,anonymous,South Africa,University of The Free State ,,,Yes,YES
+63,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+64,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+65,anonymous,anonymous,USA,Portland State University,Yes,Yes,Yes,YES
+66,anonymous,anonymous,Canada,,No,No,No,YES
+67,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+68,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+69,anonymous,anonymous,USA,University of Washington,Yes,No,,YES
+70,anonymous,anonymous,USA,University of Washington,,,No,NO
+71,anonymous,anonymous,USA,University of Washington,No,Yes,No,YES
+72,anonymous,anonymous,USA,University of Washington,No,Yes,No,YES
+73,anonymous,anonymous,USA,University of Washington,,,No,YES
+74,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+75,anonymous,anonymous,USA,University of Washington,No,No,Yes,YES
+76,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+77,anonymous,anonymous,USA,Northeastern University,No,No,Yes,NO
+78,anonymous,anonymous,USA,Southern New Hampshire Univ.,No,No,No,NO
+79,anonymous,anonymous,USA,University of Washington,,,No,NO
+80,anonymous,anonymous,USA,University of Washington,No,No,No,YES
+81,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+82,anonymous,anonymous,USA,University of Washington,,,No,YES
+83,anonymous,anonymous,USA,University of Washington,No,No,,NO
+84,anonymous,anonymous,USA,University of Washington,No,No,No,NO
+85,anonymous,anonymous,USA,University of Washington,,,No,YES
+86,anonymous,anonymous,USA,University of Washington,,Yes,,YES
+87,anonymous,anonymous,USA,George Washington University,Yes,Yes,Yes,YES
+88,anonymous,anonymous,USA,Yale University,,,,YES
