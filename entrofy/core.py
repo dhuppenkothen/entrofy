@@ -34,8 +34,8 @@ def _check_probabilities(mapper):
             raise RuntimeError('{} target probability {} < 0'.format(mapper, p))
         score += p
 
-    if score > 1:
-        raise RuntimeError('{} total target probability {} > 0'.format(mapper, score))
+    if score > 1 + np.finfo(float).eps:
+        raise RuntimeError('{} total target probability {} > 1'.format(mapper, score))
 
 
 def construct_mappers(dataframe, weights, datatypes=None):
