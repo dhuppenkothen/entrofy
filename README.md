@@ -20,6 +20,8 @@ The targets could be based on various objectives that depend on the workshop or 
 
 Note that this is explicitly not the same as a quota: the underlying algorithim optimizes for the subset of participants that overall matches up with the targets, taking into account all targets simultaneously. It is also possible to include relative weights between targets, depending on how important they are to you.
 
+For some more information about participant-driven events and some considerations important in the context of participant selection for these events can be found in [this paper](https://www.pnas.org/content/115/36/8872) (see in particular the appendix for practical advice on some aspects).
+
 ### Input 
 - CSV file with candidates, attribute, and values.
 - Target size of subset
