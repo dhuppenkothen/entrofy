@@ -226,6 +226,10 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
         The number of participants in the output set. This is the number of candidates to be selected and returned
         by this function
 
+    rng : np.random.RandomState object
+        RandomState object to fix the state of the random number generator. Useful for generating reproducible 
+        results.
+
     w : numpy.ndarray
         A 1-d array of length n_binarized_attributes, setting a weight for each binarized attribute such that different
         categories can be differently weighted.
