@@ -83,15 +83,19 @@ class BaseMapper(object):
             A DataFrame with the same index as `column`, and one binary-valued
             column for each potential output.
         """
-        new_columns = sorted(["{}{}".format(self.prefix, key) for key in self.targets])
-        df = pd.DataFrame(index=column.index, columns=new_columns, dtype=np.float)
+        new_columns = sorted(
+            ["{}{}".format(self.prefix, key) for key in self.targets]
+        )
+        df = pd.DataFrame(
+            index=column.index, columns=new_columns, dtype=np.float
+        )
 
         nonnulls = ~column.isnull()
 
         for key in self._map:
-            df.loc[nonnulls, "{}{}".format(self.prefix, key)] = column[nonnulls].apply(
-                self._map[key]
-            )
+            df.loc[nonnulls, "{}{}".format(self.prefix, key)] = column[
+                nonnulls
+            ].apply(self._map[key])
             df.loc[~nonnulls, "{}{}".format(self.prefix, key)] = None
 
         return df
@@ -216,7 +220,9 @@ class ContinuousMapper(BaseMapper):
             # if the boundaries are given, just use these
             self.boundaries = boundaries
             assert self.n_out == len(boundaries) - 1, (
-                "The boundaries must " "equal the number of " "columns plus one."
+                "The boundaries must "
+                "equal the number of "
+                "columns plus one."
             )
         else:
             self.boundaries = np.linspace(minval, maxval, n_out + 1)
@@ -231,7 +237,9 @@ class ContinuousMapper(BaseMapper):
         if targets is not None:
             assert [
                 c == t
-                for c, t in zip(np.sort(column_names), np.sort(list(targets.keys())))
+                for c, t in zip(
+                    np.sort(column_names), np.sort(list(targets.keys()))
+                )
             ]
 
         # empty target dictionary
@@ -245,7 +253,9 @@ class ContinuousMapper(BaseMapper):
                 cname = (
                     self.prefix
                     + self.prefix
-                    + "{:2f}_{:2f}".format(self.boundaries[0], self.boundaries[1])
+                    + "{:2f}_{:2f}".format(
+                        self.boundaries[0], self.boundaries[1]
+                    )
                 )
             else:
                 cname = column_names[0]
