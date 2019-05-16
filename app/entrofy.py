@@ -113,7 +113,7 @@ def entrofy(
         Optionally, you may pre-specify a set of rows to be forced into the solution.
 
     quantile : float, values in [0,1]
-        Define the quantile to be used in tie-breaking between top choices at 
+        Define the quantile to be used in tie-breaking between top choices at
         every step; choose e.g. 0.01 for the top 1% quantile
         By default, 0.01
 
