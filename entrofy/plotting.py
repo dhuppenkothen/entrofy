@@ -2,7 +2,6 @@ from __future__ import division
 from builtins import zip
 from builtins import range
 import matplotlib.pyplot as plt
-import matplotlib
 
 import numpy as np
 import pandas as pd
