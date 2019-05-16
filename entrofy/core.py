@@ -33,11 +33,15 @@ def _check_probabilities(mapper):
 
     for p in six.itervalues(mapper.targets):
         if p < 0:
-            raise RuntimeError("{} target probability {} < 0".format(mapper, p))
+            raise RuntimeError(
+                "{} target probability {} < 0".format(mapper, p)
+            )
         score += p
 
     if score > 1:
-        raise RuntimeError("{} total target probability {} > 0".format(mapper, score))
+        raise RuntimeError(
+            "{} total target probability {} > 0".format(mapper, score)
+        )
 
 
 def construct_mappers(dataframe, weights, datatypes=None):
@@ -155,15 +159,21 @@ def entrofy(
 
     # Validate n_trials
     if n_trials <= 0 or n_trials != int(n_trials):
-        raise ValueError("n_trials={} must be a positive integer".format(n_trials))
+        raise ValueError(
+            "n_trials={} must be a positive integer".format(n_trials)
+        )
 
     # Validate quantiles
     if not 0 <= quantile <= 1.0 or not isinstance(quantile, float):
-        raise ValueError("quantile={:.2f} must be in the range [0, 1]".format(quantile))
+        raise ValueError(
+            "quantile={:.2f} must be in the range [0, 1]".format(quantile)
+        )
 
     # Validate alpha
     if not 0 < alpha <= 1.0 or not isinstance(alpha, float):
-        raise ValueError("alpha={:.2f} must be in the range (0, 1]".format(alpha))
+        raise ValueError(
+            "alpha={:.2f} must be in the range (0, 1]".format(alpha)
+        )
 
     # Drop the opt-outs
     if opt_outs is not None:
@@ -191,7 +201,10 @@ def entrofy(
         df_binary = df_binary.join(new_df)
         all_weights.update({k: weights[key] for k in new_df.columns})
         all_probabilities.update(
-            {"{}{}".format(mapper.prefix, k): mapper.targets[k] for k in mapper.targets}
+            {
+                "{}{}".format(mapper.prefix, k): mapper.targets[k]
+                for k in mapper.targets
+            }
         )
 
     # Construct the target probability vector and weight vector
@@ -232,7 +245,9 @@ def entrofy(
     return dataframe.index[best], max_score
 
 
-def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5):
+def __entrofy(
+    X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5
+):
     """See entrofy() for documentation"""
 
     n_participants, n_attributes = X.shape
@@ -303,7 +318,10 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
         new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
-    return __objective(np.nansum(X[y], axis=0), w, q, alpha=alpha), np.flatnonzero(y)
+    return (
+        __objective(np.nansum(X[y], axis=0), w, q, alpha=alpha),
+        np.flatnonzero(y),
+    )
 
 
 def __objective(p, w, q, alpha=0.5):
