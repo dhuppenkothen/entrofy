@@ -48,14 +48,14 @@ def _make_counts_summary(column, key, mapper, datatype="all"):
     binary = mapper.transform(column)
     s = binary.sum()
 
-    summary_data = np.array([s.index, s/s.sum()]).T
+    summary_data = np.array([s.index, s / s.sum()]).T
     summary = pd.DataFrame(summary_data, columns=[key, "counts"])
     summary["type"] = [datatype for _ in range(len(summary.index))]
 
     return summary
 
 
-def plot_fractions(column, idx, key, mapper, ax = None):
+def plot_fractions(column, idx, key, mapper, ax=None):
     """
     Plot the fractions
 
@@ -87,8 +87,9 @@ def plot_fractions(column, idx, key, mapper, ax = None):
     full_summary = _make_counts_summary(column, key, mapper, datatype="all")
 
     # compute the summary of the selected participants
-    selected_summary = _make_counts_summary(column[idx], key, mapper,
-                                            datatype="selected")
+    selected_summary = _make_counts_summary(
+        column[idx], key, mapper, datatype="selected"
+    )
 
     # concatenate the two DataFrames
     summary = pd.concat([full_summary, selected_summary])
@@ -101,19 +102,20 @@ def plot_fractions(column, idx, key, mapper, ax = None):
 
     # make figure
     if ax is None:
-        fig, ax = plt.subplots(1,1, figsize=(4*unique_labels, 8))
+        fig, ax = plt.subplots(1, 1, figsize=(4 * unique_labels, 8))
 
     sns.barplot(x=key, y="counts", hue="type", data=summary, ax=ax)
     ax.set_ylabel("Fraction of sample")
 
     xticklabels = [x.get_text() for x in ax.get_xticklabels()]
-    xtick_new = [x.split("_")[1] if len(x.split("_"))>1 else x for x in xticklabels]
+    xtick_new = [x.split("_")[1] if len(x.split("_")) > 1 else x for x in xticklabels]
     ax.set_xticklabels(xtick_new)
 
     # add targets
-    for i,l in enumerate(np.sort(list(mapper.targets.keys()))):
-        ax.hlines(mapper.targets[l], -0.5+i*1.0, 0.5+i*1.0, lw=2,
-                  linestyle="dashed")
+    for i, l in enumerate(np.sort(list(mapper.targets.keys()))):
+        ax.hlines(
+            mapper.targets[l], -0.5 + i * 1.0, 0.5 + i * 1.0, lw=2, linestyle="dashed"
+        )
 
     return ax, summary
 
@@ -149,16 +151,16 @@ def plot(df, idx, weights, mappers=None, cols=4):
     columns = list(mappers.keys())
     ncolumns = len(columns)
 
-    rows = np.floor(ncolumns/cols)
+    rows = np.floor(ncolumns / cols)
     if (ncolumns % cols) > 0:
         rows += 1
 
-    fig = plt.figure(figsize=(4*cols, 3*rows))
+    fig = plt.figure(figsize=(4 * cols, 3 * rows))
 
     axes = []
 
-    for i,c in enumerate(columns):
-        ax = fig.add_subplot(rows, cols, i+1)
+    for i, c in enumerate(columns):
+        ax = fig.add_subplot(rows, cols, i + 1)
         ax, _ = plot_fractions(df[c], idx, c, mappers[c], ax=ax)
         axes.append(ax)
 
@@ -227,27 +229,36 @@ def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
     tuples, counts = [], []
     for i in range(len(x_keys)):
         for j in range(len(y_keys)):
-            tuples.append((i,j))
+            tuples.append((i, j))
 
-            counts.append(len(df[(df[xlabel] == x_keys[i]) &
-                                 (df[ylabel] == y_keys[j])]))
+            counts.append(
+                len(df[(df[xlabel] == x_keys[i]) & (df[ylabel] == y_keys[j])])
+            )
 
     x, y = list(zip(*tuples))
 
     cmap = plt.cm.get_cmap(cmap)
-    sizes = (np.array(counts)/np.sum(counts))
+    sizes = np.array(counts) / np.sum(counts)
 
-    ax.scatter(x, y, s=s*1000*sizes, marker='o', linewidths=1, edgecolor='black',
-                c=cmap(prefac*sizes/(np.max(sizes)-np.min(sizes))), alpha=0.7)
+    ax.scatter(
+        x,
+        y,
+        s=s * 1000 * sizes,
+        marker="o",
+        linewidths=1,
+        edgecolor="black",
+        c=cmap(prefac * sizes / (np.max(sizes) - np.min(sizes))),
+        alpha=0.7,
+    )
 
     ax.set_xticks(np.arange(len(x_keys)))
     ax.set_xticklabels(x_keys)
-    ax.set_xlim(np.min(x)-1, np.max(x)+1)
+    ax.set_xlim(np.min(x) - 1, np.max(x) + 1)
     ax.set_xlabel(xlabel)
 
     ax.set_yticks(np.arange(len(y_keys)))
     ax.set_yticklabels(y_keys)
-    ax.set_ylim(np.min(y)-1, np.max(y)+1)
+    ax.set_ylim(np.min(y) - 1, np.max(y) + 1)
     ax.set_ylabel(ylabel)
 
     return ax
@@ -256,12 +267,15 @@ def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
 def _convert_continuous_to_categorical(column, mapper):
     binary = mapper.transform(column)
     b_stacked = binary.stack()
-    cat_column = pd.Series(pd.Categorical(b_stacked[b_stacked != 0].index.get_level_values(1)))
+    cat_column = pd.Series(
+        pd.Categorical(b_stacked[b_stacked != 0].index.get_level_values(1))
+    )
     return cat_column
 
 
-def _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys, y_keys, ax,
-                                     cmap, n_cat=5, plottype="box"):
+def _plot_categorical_and_continuous(
+    df, xlabel, ylabel, x_keys, y_keys, ax, cmap, n_cat=5, plottype="box"
+):
     """
     Plot a categorical variable and a continuous variable against each
     other. Types of plots include box plot, violin plot, strip plot and swarm
@@ -305,25 +319,30 @@ def _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys, y_keys, ax,
 
     current_palette = sns.color_palette(cmap, n_cat)
     if plottype == "box":
-        sns.boxplot(x=xlabel, y=ylabel, data=df, order=keys,
-                    palette=current_palette, ax=ax)
+        sns.boxplot(
+            x=xlabel, y=ylabel, data=df, order=keys, palette=current_palette, ax=ax
+        )
     elif plottype == "strip":
-        sns.stripplot(x=xlabel, y=ylabel, data=df, order=keys,
-                      palette=current_palette, ax=ax)
+        sns.stripplot(
+            x=xlabel, y=ylabel, data=df, order=keys, palette=current_palette, ax=ax
+        )
     elif plottype == "swarm":
-        sns.swarmplot(x=xlabel, y=ylabel, data=df, order=keys,
-                      palette=current_palette, ax=ax)
+        sns.swarmplot(
+            x=xlabel, y=ylabel, data=df, order=keys, palette=current_palette, ax=ax
+        )
     elif plottype == "violin":
-        sns.violinplot(x=xlabel, y=ylabel, data=df, order=keys,
-                       palette=current_palette, ax=ax)
+        sns.violinplot(
+            x=xlabel, y=ylabel, data=df, order=keys, palette=current_palette, ax=ax
+        )
     else:
         raise Exception("plottype not recognized!")
 
     return ax
 
 
-def _plot_continuous(df, xlabel, ylabel, ax, plottype="kde", n_levels=10,
-                     cmap="YlGnBu", shade=True):
+def _plot_continuous(
+    df, xlabel, ylabel, ax, plottype="kde", n_levels=10, cmap="YlGnBu", shade=True
+):
 
     """
     Plot a two continuous variables against each other in a scatter plot or a
@@ -365,29 +384,37 @@ def _plot_continuous(df, xlabel, ylabel, ax, plottype="kde", n_levels=10,
 
     """
 
-
     xcolumn = df[xlabel]
     ycolumn = df[ylabel]
     x_clean = xcolumn[np.isfinite(xcolumn) & np.isfinite(ycolumn)]
     y_clean = ycolumn[np.isfinite(ycolumn) & np.isfinite(xcolumn)]
 
     if plottype == "kde":
-        sns.kdeplot(x_clean, y_clean, n_levels=n_levels, shade=shade,
-                    ax=ax, cmap=cmap)
+        sns.kdeplot(x_clean, y_clean, n_levels=n_levels, shade=shade, ax=ax, cmap=cmap)
 
     elif plottype == "scatter":
         current_palette = sns.color_palette(cmap, 5)
         c = current_palette[2]
-        ax.scatter(x_clean, y_clean, color=c, s=10, lw=0,
-                   edgecolor="none", alpha=0.8)
+        ax.scatter(x_clean, y_clean, color=c, s=10, lw=0, edgecolor="none", alpha=0.8)
 
     return ax
 
 
-def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
-                      ax = None, xtype="categorical", ytype="categorical",
-                      cmap="YlGnBu", prefac=10., cat_type="box",
-                      cont_type="kde", s=2):
+def plot_correlation(
+    df,
+    xlabel,
+    ylabel,
+    xmapper=None,
+    ymapper=None,
+    ax=None,
+    xtype="categorical",
+    ytype="categorical",
+    cmap="YlGnBu",
+    prefac=10.0,
+    cat_type="box",
+    cont_type="kde",
+    s=2,
+):
 
     """
     Plot two variables against each other. Produces different types of
@@ -445,7 +472,7 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
 
     """
     if ax is None:
-        fig, ax = plt.subplots(1,1, figsize=(9,7))
+        fig, ax = plt.subplots(1, 1, figsize=(9, 7))
 
     if xtype == "categorical":
         if xmapper is None:
@@ -475,52 +502,80 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
         y_keys = ylabel
 
     if (xtype == "categorical") & (ytype == "categorical"):
-        ax = _plot_categorical(df, xlabel, ylabel,
-                               x_keys, y_keys, prefac,
-                               ax, cmap, s)
+        ax = _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s)
 
-    elif ((xtype == "categorical") & (ytype == "continuous")):
+    elif (xtype == "categorical") & (ytype == "continuous"):
         n_cat = x_fields
         if cat_type == "categorical":
-            cat_column = _convert_continuous_to_categorical(df[ylabel],
-                                                            ymapper)
+            cat_column = _convert_continuous_to_categorical(df[ylabel], ymapper)
             cat_column.name = ylabel
             y_fields = len(ymapper.targets)
             y_keys = np.sort(list(ymapper.targets.keys()))
             df_temp = pd.DataFrame([df[xlabel], cat_column]).transpose()
 
-            ax = _plot_categorical(df_temp, xlabel, ylabel,
-                                   x_keys, y_keys, prefac,
-                                   ax, cmap)
+            ax = _plot_categorical(
+                df_temp, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap
+            )
         else:
-            ax = _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys,
-                                                  y_keys, ax, cmap, n_cat=n_cat,
-                                                  plottype=cat_type)
+            ax = _plot_categorical_and_continuous(
+                df,
+                xlabel,
+                ylabel,
+                x_keys,
+                y_keys,
+                ax,
+                cmap,
+                n_cat=n_cat,
+                plottype=cat_type,
+            )
 
-    elif ((xtype == "continuous") & (ytype == "categorical")):
+    elif (xtype == "continuous") & (ytype == "categorical"):
         n_cat = y_fields
 
         if cat_type == "categorical":
-            cat_column = _convert_continuous_to_categorical(df[xlabel],
-                                                            xmapper)
+            cat_column = _convert_continuous_to_categorical(df[xlabel], xmapper)
             x_fields = len(xmapper.targets)
             x_keys = np.sort(list(xmapper.targets.keys()))
 
-            df_temp = pd.DataFrame([cat_column, df[ylabel]],
-                                   columns=[xlabel, ylabel])
+            df_temp = pd.DataFrame([cat_column, df[ylabel]], columns=[xlabel, ylabel])
 
-            ax = _plot_categorical(df_temp, xlabel, ylabel, x_fields, y_fields,
-                                   x_keys, y_keys, prefac, ax, cmap)
+            ax = _plot_categorical(
+                df_temp,
+                xlabel,
+                ylabel,
+                x_fields,
+                y_fields,
+                x_keys,
+                y_keys,
+                prefac,
+                ax,
+                cmap,
+            )
 
         else:
-            ax = _plot_categorical_and_continuous(df, xlabel, ylabel, x_keys,
-                                                  y_keys, ax, cmap,
-                                                  n_cat=n_cat,
-                                                  plottype=cat_type)
+            ax = _plot_categorical_and_continuous(
+                df,
+                xlabel,
+                ylabel,
+                x_keys,
+                y_keys,
+                ax,
+                cmap,
+                n_cat=n_cat,
+                plottype=cat_type,
+            )
 
-    elif ((xtype == "continuous") & (ytype == "continuous")):
-        ax = _plot_continuous(df, xlabel, ylabel, ax, plottype=cont_type,
-                              n_levels=10, cmap="YlGnBu", shade=True)
+    elif (xtype == "continuous") & (ytype == "continuous"):
+        ax = _plot_continuous(
+            df,
+            xlabel,
+            ylabel,
+            ax,
+            plottype=cont_type,
+            n_levels=10,
+            cmap="YlGnBu",
+            shade=True,
+        )
 
     else:
         raise Exception("Not currently supported!")
@@ -528,8 +583,9 @@ def plot_correlation(df, xlabel, ylabel, xmapper=None, ymapper=None,
     return ax
 
 
-def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
-                      cmap="YlGnBu", bins=30):
+def plot_distribution(
+    df, xlabel, xmapper=None, xtype="categorical", ax=None, cmap="YlGnBu", bins=30
+):
     """
     Plot the distribution of a single variable in the DataFrame.
 
@@ -575,30 +631,44 @@ def plot_distribution(df, xlabel, xmapper=None, xtype="categorical", ax=None,
     c = sns.color_palette(cmap, 5)[2]
 
     if ax is None:
-        fig, ax = plt.subplots(1,1, figsize=(8,6))
+        fig, ax = plt.subplots(1, 1, figsize=(8, 6))
     if xtype == "categorical":
-        summary = _make_counts_summary(df[xlabel], xlabel,
-                                       xmapper, datatype="all")
+        summary = _make_counts_summary(df[xlabel], xlabel, xmapper, datatype="all")
 
         summary = summary.sort_values(by=xlabel)
 
-        #make figure
+        # make figure
         sns.barplot(x=xlabel, y="counts", data=summary, ax=ax, color=c)
         ax.set_ylabel("Fraction of sample")
 
     elif xtype == "continuous":
         column = df[xlabel]
         c_clean = column[np.isfinite(column)]
-        sns.distplot(c_clean, bins=bins, hist={"histtype": "stepfilled"},
-                    color=c, kde=True, ax=ax)
+        sns.distplot(
+            c_clean,
+            bins=bins,
+            hist={"histtype": "stepfilled"},
+            color=c,
+            kde=True,
+            ax=ax,
+        )
         ax.set_xlabel(xlabel)
         plt.ylabel("Number of occurrences")
 
     return ax
 
 
-def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
-                  prefac=10., cat_type="box", cont_type="hist", fig=None):
+def plot_triangle(
+    df,
+    weights,
+    mappers=None,
+    cmap="YlGnBu",
+    bins=30,
+    prefac=10.0,
+    cat_type="box",
+    cont_type="hist",
+    fig=None,
+):
     """
     Make a triangle plot of all the relevant columns in the DataFrame.
 
@@ -667,7 +737,7 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
 
     # construct the figure
     if fig is None:
-        fig, axes = plt.subplots(nkeys, nkeys, figsize=(4*nkeys, 3*nkeys))
+        fig, axes = plt.subplots(nkeys, nkeys, figsize=(4 * nkeys, 3 * nkeys))
 
     else:
         axes = []
@@ -686,40 +756,54 @@ def plot_triangle(df, weights, mappers=None, cmap="YlGnBu", bins=30,
 
             # upper triangle: print white space
             if i < j:
-                axes[i,j].spines['right'].set_visible(False)
-                axes[i,j].spines['top'].set_visible(False)
-                axes[i,j].spines['left'].set_visible(False)
-                axes[i,j].spines['bottom'].set_visible(False)
-                axes[i,j].set_facecolor('white')
-                axes[i,j].set_xlabel("")
-                axes[i,j].set_ylabel("")
-                axes[i,j].axis('off')
+                axes[i, j].spines["right"].set_visible(False)
+                axes[i, j].spines["top"].set_visible(False)
+                axes[i, j].spines["left"].set_visible(False)
+                axes[i, j].spines["bottom"].set_visible(False)
+                axes[i, j].set_facecolor("white")
+                axes[i, j].set_xlabel("")
+                axes[i, j].set_ylabel("")
+                axes[i, j].axis("off")
                 continue
 
             # diagonal: plot the univariate distribution
             elif i == j:
-                axes[i,j] = plot_distribution(df, kx, xmapper=mappers[kx],
-                                              xtype=xtype, ax=axes[i,j],
-                                              cmap=cmap, bins=bins)
+                axes[i, j] = plot_distribution(
+                    df,
+                    kx,
+                    xmapper=mappers[kx],
+                    xtype=xtype,
+                    ax=axes[i, j],
+                    cmap=cmap,
+                    bins=bins,
+                )
 
             # upper triangle: plot the bivariate distributions
             else:
-                axes[i,j] = plot_correlation(df, ky, kx, xmapper=mappers[ky],
-                                             ymapper=mappers[kx], ax=axes[i,j],
-                                             cmap=cmap, xtype=ytype,
-                                             ytype=xtype, prefac=prefac,
-                                             cat_type=cat_type,
-                                             cont_type=cont_type)
+                axes[i, j] = plot_correlation(
+                    df,
+                    ky,
+                    kx,
+                    xmapper=mappers[ky],
+                    ymapper=mappers[kx],
+                    ax=axes[i, j],
+                    cmap=cmap,
+                    xtype=ytype,
+                    ytype=xtype,
+                    prefac=prefac,
+                    cat_type=cat_type,
+                    cont_type=cont_type,
+                )
             if i < nkeys - 1:
-                axes[i,j].set_xticklabels([])
-                axes[i,j].set_xlabel("")
+                axes[i, j].set_xticklabels([])
+                axes[i, j].set_xlabel("")
             else:
-                [l.set_rotation(45) for l in axes[i,j].get_xticklabels()]
+                [l.set_rotation(45) for l in axes[i, j].get_xticklabels()]
 
             if j > 0:
-                axes[i,j].set_yticklabels([])
+                axes[i, j].set_yticklabels([])
                 if i != j:
-                    axes[i,j].set_ylabel("")
+                    axes[i, j].set_ylabel("")
 
     plt.tight_layout()
 

@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''Column mapper object definitions'''
+"""Column mapper object definitions"""
 
 from builtins import zip
 from builtins import range
 from builtins import object
 import numpy as np
 import pandas as pd
-import six 
+import six
 
-__all__ = ['ObjectMapper', 'BaseMapper', 'ContinuousMapper']
+__all__ = ["ObjectMapper", "BaseMapper", "ContinuousMapper"]
+
 
 def equal_maker(value):
-    '''Second-order function to make an equivalence comparator
+    """Second-order function to make an equivalence comparator
 
     Parameters
     ----------
@@ -23,8 +24,9 @@ def equal_maker(value):
     -------
     comp : function
         comp(x) returns `True` iff `x == value`
-    '''
+    """
     return lambda x: x == value
+
 
 def map_boundaries(bmin, bmax, last=False):
     """
@@ -62,12 +64,13 @@ def map_boundaries(bmin, bmax, last=False):
 
 
 class BaseMapper(object):
-    '''A generic base class for mapper objects'''
+    """A generic base class for mapper objects"""
+
     def __init__(self, column, **kwargs):
         pass
 
     def transform(self, column):
-        '''Binarize a column
+        """Binarize a column
 
         Parameters
         ----------
@@ -79,30 +82,31 @@ class BaseMapper(object):
         frame : pd.DataFrame, dtype=float
             A DataFrame with the same index as `column`, and one binary-valued
             column for each potential output.
-        '''
-        new_columns =  sorted(['{}{}'.format(self.prefix, key) for key in self.targets])
-        df = pd.DataFrame(index=column.index,
-                          columns = new_columns,
-                          dtype=np.float)
+        """
+        new_columns = sorted(["{}{}".format(self.prefix, key) for key in self.targets])
+        df = pd.DataFrame(index=column.index, columns=new_columns, dtype=np.float)
 
         nonnulls = ~column.isnull()
 
         for key in self._map:
-            df.loc[nonnulls, '{}{}'.format(self.prefix, key)] = column[nonnulls].apply(self._map[key])
-            df.loc[~nonnulls, '{}{}'.format(self.prefix, key)] = None
+            df.loc[nonnulls, "{}{}".format(self.prefix, key)] = column[nonnulls].apply(
+                self._map[key]
+            )
+            df.loc[~nonnulls, "{}{}".format(self.prefix, key)] = None
 
         return df
 
     def _prepend_prefix(self, targets):
         new_targets = {}
         for key, t in six.iteritems(targets):
-            new_key = '{}{}'.format(self.prefix, key)
+            new_key = "{}{}".format(self.prefix, key)
             new_targets[new_key] = t
 
         return new_targets
 
+
 class ObjectMapper(BaseMapper):
-    '''A generic object-mapper.
+    """A generic object-mapper.
 
     This mapper is appropriate for strings or categorical types.
 
@@ -110,9 +114,10 @@ class ObjectMapper(BaseMapper):
     ----------
     targets : dict
         A dictionary mapping output column names to target probabilities
-    '''
-    def __init__(self, column, prefix='', n_out=None, targets=None):
-        '''Object mapper.
+    """
+
+    def __init__(self, column, prefix="", n_out=None, targets=None):
+        """Object mapper.
 
         Parameters
         ----------
@@ -130,7 +135,7 @@ class ObjectMapper(BaseMapper):
         targets: dict {value: probability}
             An optional pre-computed target dictionary.
             If provided, then `n_out` and `prefix` are ignored.
-        '''
+        """
         self.prefix = prefix
 
         if targets is not None:
@@ -148,10 +153,10 @@ class ObjectMapper(BaseMapper):
             self._map = {}
 
             values = values[:n_out]
-            target_prob = 1./len(values)
+            target_prob = 1.0 / len(values)
 
             for val in values:
-                key = '{}{}'.format(prefix, val)
+                key = "{}{}".format(prefix, val)
                 self.targets[key] = target_prob
                 self._map[key] = equal_maker(val)
 
@@ -162,8 +167,15 @@ class ContinuousMapper(BaseMapper):
 
     """
 
-    def __init__(self, column, n_out=3, boundaries=None, targets=None,
-                 column_names=None, prefix=""):
+    def __init__(
+        self,
+        column,
+        n_out=3,
+        boundaries=None,
+        targets=None,
+        column_names=None,
+        prefix="",
+    ):
         """
         This class maps continuous values into a set of `n_out` discrete bins.
 
@@ -203,33 +215,38 @@ class ContinuousMapper(BaseMapper):
         if boundaries is not None:
             # if the boundaries are given, just use these
             self.boundaries = boundaries
-            assert self.n_out == len(boundaries)-1,  ("The boundaries must "
-                                                      "equal the number of "
-                                                      "columns plus one.")
+            assert self.n_out == len(boundaries) - 1, (
+                "The boundaries must " "equal the number of " "columns plus one."
+            )
         else:
-            self.boundaries = np.linspace(minval, maxval, n_out+1)
+            self.boundaries = np.linspace(minval, maxval, n_out + 1)
 
         # make sure list of column names matches the number of columns
         if column_names is not None:
-            assert self.n_out == len(column_names),  ("The list of column names"
-                                                      " must equal n_out.")
+            assert self.n_out == len(column_names), (
+                "The list of column names" " must equal n_out."
+            )
 
         # assert that the keys in `targets` are the same as the column names.
         if targets is not None:
-            assert [c == t for c,t  in zip(np.sort(column_names),
-                                           np.sort(list(targets.keys())))]
+            assert [
+                c == t
+                for c, t in zip(np.sort(column_names), np.sort(list(targets.keys())))
+            ]
 
         # empty target dictionary
         self.targets = {}
         self._map = {}
 
-        default_target = 1./self.n_out
+        default_target = 1.0 / self.n_out
 
         if n_out == 1:
             if column_names is None:
-                cname =  self.prefix + self.prefix + \
-                            "{:2f}_{:2f}".format(self.boundaries[0],
-                                                 self.boundaries[1])
+                cname = (
+                    self.prefix
+                    + self.prefix
+                    + "{:2f}_{:2f}".format(self.boundaries[0], self.boundaries[1])
+                )
             else:
                 cname = column_names[0]
 
@@ -238,15 +255,16 @@ class ContinuousMapper(BaseMapper):
             else:
                 self.targets[cname] = targets[cname]
 
-            self._map[cname] = map_boundaries(self.boundaries[0],
-                                              self.boundaries[1], last=True)
+            self._map[cname] = map_boundaries(
+                self.boundaries[0], self.boundaries[1], last=True
+            )
 
         else:
             for i in range(n_out):
                 if column_names is None:
-                    cname = self.prefix + \
-                            "{:2f}_{:2f}".format(self.boundaries[i],
-                                                 self.boundaries[i+1])
+                    cname = self.prefix + "{:2f}_{:2f}".format(
+                        self.boundaries[i], self.boundaries[i + 1]
+                    )
                 else:
                     cname = column_names[i]
 
@@ -255,11 +273,12 @@ class ContinuousMapper(BaseMapper):
                 else:
                     self.targets[cname] = targets[cname]
 
-                if i == n_out-1:
+                if i == n_out - 1:
                     last = True
                 else:
                     last = False
-                self._map[cname] = map_boundaries(self.boundaries[i],
-                                                  self.boundaries[i+1], last)
+                self._map[cname] = map_boundaries(
+                    self.boundaries[i], self.boundaries[i + 1], last
+                )
 
         return

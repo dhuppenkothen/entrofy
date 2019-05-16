@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''Entrofy'''
+"""Entrofy"""
 
 from . import mappers
 from . import plotting
