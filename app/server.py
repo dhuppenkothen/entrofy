@@ -2,10 +2,12 @@
 
 from __future__ import print_function
 
+from future import standard_library
+standard_library.install_aliases()
 import argparse
 from flask import Flask, request, redirect, url_for, render_template, Response
 from werkzeug import secure_filename
-import ConfigParser
+import configparser
 import os
 import re
 import sys
@@ -19,7 +21,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 def load_config(server_ini):
-    P = ConfigParser.RawConfigParser()
+    P = configparser.RawConfigParser()
 
     P.opionxform = str
     P.read(server_ini)
@@ -28,7 +30,7 @@ def load_config(server_ini):
     for section in P.sections():
         CFG[section] = dict(P.items(section))
 
-    for (k, v) in CFG['server'].iteritems():
+    for (k, v) in CFG['server'].items():
         app.config[k] = v
     return CFG
 

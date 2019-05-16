@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from __future__ import division
 
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import pandas as pd
 
@@ -62,7 +66,7 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
         p[np.isnan(p)] = 0.0
 
         # Compute the candidate distributions
-        p_new = (p * i + X) / (i + 1.0)
+        p_new = old_div((p * i + X), (i + 1.0))
 
         # Wherever X is nan, propagate the old p since we have no new information
         p_new[Xn] = (Xn * p)[Xn]
