@@ -2,16 +2,16 @@ from setuptools import setup, find_packages
 
 import imp
 
-version = imp.load_source('entrofy.version', 'entrofy/version.py')
+version = imp.load_source("entrofy.version", "entrofy/version.py")
 
 setup(
-    name='entrofy',
+    name="entrofy",
     version=version.version,
-    description='Entrofy',
-    author='Daniela Huppenkothen',
-    author_email='daniela.huppenkothen@nyu.edu',
-    url='http://github.com/dhuppenkothen/entrofy',
-    download_url='http://github.com/dhuppenkothen/entrofy/releases',
+    description="Entrofy",
+    author="Daniela Huppenkothen",
+    author_email="daniela.huppenkothen@nyu.edu",
+    url="http://github.com/dhuppenkothen/entrofy",
+    download_url="http://github.com/dhuppenkothen/entrofy/releases",
     packages=find_packages(),
     long_description="""Entrofy""",
     classifiers=[
@@ -25,14 +25,13 @@ setup(
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
     ],
-    license='ISC',
+    license="ISC",
     install_requires=[
-        'pandas>=0.18',
-        'numpy>=1.10',
-        'seaborn>=0.6.0',
-        'matplotlib>=1.4.3'
+        "pandas>=0.18",
+        "numpy>=1.10",
+        "seaborn>=0.6.0",
+        "matplotlib>=1.4.3",
+        "future",
     ],
-    extras_require={
-        'docs': ['numpydoc']
-    }
+    extras_require={"docs": ["numpydoc"]},
 )
