@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''Utilities for entrofy'''
+"""Utilities for entrofy"""
 
 import numbers
 import numpy as np
+
 
 # The following is borrowed from scikit-learn v0.17
 def check_random_state(seed):
@@ -19,6 +20,7 @@ def check_random_state(seed):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
-    raise ValueError('%r cannot be used to seed a numpy.random.RandomState'
-                     ' instance' % seed)
-
+    raise ValueError(
+        "%r cannot be used to seed a numpy.random.RandomState"
+        " instance" % seed
+    )

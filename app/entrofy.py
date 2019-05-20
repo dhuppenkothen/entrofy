@@ -1,25 +1,31 @@
 #!/usr/bin/env python
 from __future__ import print_function
+from __future__ import division
 
+from builtins import zip
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import pandas as pd
+
 
 def obj(p, w, q):
     # Prevent numerical underflow in log
 
     amin = 1e-200
 
-    pbar = 1. - p
-    qbar = 1. - q
+    pbar = 1.0 - p
+    qbar = 1.0 - q
 
-    entropy = (p * (np.log(p + amin) - np.log(q + amin)) +
-               pbar * (np.log(pbar + amin) - np.log(qbar + amin)))
+    entropy = p * (np.log(p + amin) - np.log(q + amin)) + pbar * (
+        np.log(pbar + amin) - np.log(qbar + amin)
+    )
 
-    return - entropy.dot(w)
+    return -entropy.dot(w)
 
 
 def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
-    '''See entrofy() for documentation'''
+    """See entrofy() for documentation"""
 
     n_participants, n_attributes = X.shape
 
@@ -60,7 +66,7 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
         p[np.isnan(p)] = 0.0
 
         # Compute the candidate distributions
-        p_new = (p * i + X) / (i + 1.0)
+        p_new = old_div((p * i + X), (i + 1.0))
 
         # Wherever X is nan, propagate the old p since we have no new information
         p_new[Xn] = (Xn * p)[Xn]
@@ -73,7 +79,7 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
 
         # Select the top score.  Break near-ties randomly.
         delta_real = delta[np.isfinite(delta)]
-        target_score = np.percentile(delta_real, 1.0-quantile)
+        target_score = np.percentile(delta_real, 1.0 - quantile)
 
         new_idx = np.random.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
@@ -81,8 +87,10 @@ def __entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01):
     return obj(np.nanmean(X[y], axis=0), w, q), np.flatnonzero(y)
 
 
-def entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01, n_samples=15):
-    '''Entrofy your panel.
+def entrofy(
+    X, k, w=None, q=None, pre_selects=None, quantile=0.01, n_samples=15
+):
+    """Entrofy your panel.
 
     Parameters
     ----------
@@ -105,7 +113,7 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01, n_samples=15)
         Optionally, you may pre-specify a set of rows to be forced into the solution.
 
     quantile : float, values in [0,1]
-        Define the quantile to be used in tie-breaking between top choices at 
+        Define the quantile to be used in tie-breaking between top choices at
         every step; choose e.g. 0.01 for the top 1% quantile
         By default, 0.01
 
@@ -122,13 +130,14 @@ def entrofy(X, k, w=None, q=None, pre_selects=None, quantile=0.01, n_samples=15)
     idx : np.ndarray, shape=(k,)
         Indicies of the selected rows
 
-    '''
+    """
     if pre_selects is not None and len(pre_selects):
         n_samples = 1
 
-    results = [__entrofy(X, k, w=w, q=q, pre_selects=pre_selects,
-                         quantile=quantile)
-               for _ in range(n_samples)]
+    results = [
+        __entrofy(X, k, w=w, q=q, pre_selects=pre_selects, quantile=quantile)
+        for _ in range(n_samples)
+    ]
 
     max_score, best = results[0]
     for score, solution in results[1:]:
@@ -165,13 +174,13 @@ def binarize(df, n_bins=5):
                 continue
 
             z += 1.0
-            new_name = '{}_{}'.format(column, value)
+            new_name = "{}_{}".format(column, value)
             df2[new_name] = new_series
             df2[new_name][pd.isnull(data)] = np.nan
             groupkeys.append(new_name)
 
         for k in groupkeys:
-            targets[k] = 1./z
+            targets[k] = 1.0 / z
 
     return df2, targets
 
@@ -189,24 +198,29 @@ def process_csv(fdesc):
     headers = []
     headers.extend([dict(title=_) for _ in df.columns])
 
-    return df.to_json(orient='values'), headers, targets, len(df), p_all
+    return df.to_json(orient="values"), headers, targets, len(df), p_all
 
 
 def process_table(data, index, columns, k, q, w, pre_selects):
 
-    df = pd.DataFrame(data=data, columns=[_['title'] for _ in columns])
+    df = pd.DataFrame(data=data, columns=[_["title"] for _ in columns])
     # Find the index column
     df = df.set_index(index)
 
     X = df.values.astype(np.float)
-    score, rows = entrofy(X, k, q=np.asarray([float(_) for _ in q]),
-                                w=np.asarray([float(_) for _ in w]),
-                                pre_selects=pre_selects)
+    score, rows = entrofy(
+        X,
+        k,
+        q=np.asarray([float(_) for _ in q]),
+        w=np.asarray([float(_) for _ in w]),
+        pre_selects=pre_selects,
+    )
 
     p_all = compute_p(X)
     p_selected = compute_p(X[rows])
 
     return score, rows, p_all, p_selected
+
 
 def compute_p(X):
 
