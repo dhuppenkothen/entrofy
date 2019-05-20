@@ -32,36 +32,28 @@ Note that this is explicitly not the same as a quota: the underlying algorithim 
 - Subset of candidates which approximate the target distributions
 - Distribution of each value in subset
 
-## Install Instructions
-
-# Installation updates Cband & Jphuong 01/10/2019
-1. Be sure conda environment has python2
-> python --version
-2. Activate environment
-> source activate py2 
-or
-> conda create py2 -n python=2.7
-then 
-> source activate py2 
-3. From entrofy/apps directory
-Edited to remove json, and configparser edited to lowercase.
-> pip install -r requirements.txt
-4. From entrofy folder
-python setup.py install
-5. In the command line used for source activate, spin up Jupyter Notebook
-> jupyter notebook  
-in other terminals, the default environment will spin up
-6. Open Jupyter Notebook, go to kernal drop down box, select python2 kernal. 
+## App Installation Instructions
 
 **Note**: The app is under active development and requires updates before running reliably. As of now, it's not really usable. Use the Python library instead (see below).
 
 Download the app/ directory
 
-```
+```bash
 pip install -r requirements.txt
 python server.py
 ```
+
 then go to http://localhost:5000/ in your web browser
+
+## Python Library Installation Instructions
+
+As noted above, at present, `entrofy` is best used as a Python package. Navigate to the top-level `entrofy` directory, then install it in your local environment.
+
+```bash
+python setup.py install
+```
+
+This should also install all necessary dependencies for the Python package.
 
 ## Usage Instructions
 
