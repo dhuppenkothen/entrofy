@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
-'''Entrofy core optimization routines'''
+"""Entrofy core optimization routines"""
 
+from builtins import range
 import warnings
 from six.moves import cPickle as pickle
 
@@ -12,10 +13,11 @@ import six
 from .mappers import ContinuousMapper, ObjectMapper
 from .utils import check_random_state
 
-__all__ = ['entrofy', 'construct_mappers', 'save', 'load']
+__all__ = ["entrofy", "construct_mappers", "save", "load"]
+
 
 def _check_probabilities(mapper):
-    '''Verify that the target probabilities for a mapper sum to at most 1.
+    """Verify that the target probabilities for a mapper sum to at most 1.
 
     Parameters
     ----------
@@ -25,13 +27,15 @@ def _check_probabilities(mapper):
     ------
     RuntimeError
         if target probabilities are ill-formed
-    '''
+    """
 
     score = 0.0
 
     for p in six.itervalues(mapper.targets):
         if p < 0:
-            raise RuntimeError('{} target probability {} < 0'.format(mapper, p))
+            raise RuntimeError(
+                "{} target probability {} < 0".format(mapper, p)
+            )
         score += p
 
     if score > 1 + np.finfo(float).eps:
@@ -39,7 +43,7 @@ def _check_probabilities(mapper):
 
 
 def construct_mappers(dataframe, weights, datatypes=None):
-    '''Construct mappers from a dataframe
+    """Construct mappers from a dataframe
 
     Parameters
     ----------
@@ -58,7 +62,7 @@ def construct_mappers(dataframe, weights, datatypes=None):
     -------
     mappers : dict
         `mappers[key]` is a `Mapper` object for column `dataframe[key]`.
-    '''
+    """
     mappers = {}
 
     # Populate any missing mappres
@@ -85,9 +89,19 @@ def construct_mappers(dataframe, weights, datatypes=None):
     return mappers
 
 
-def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
-            opt_outs=None, quantile=0.01, n_trials=15, seed=None, alpha=0.5):
-    '''Entrofy your panel.
+def entrofy(
+    dataframe,
+    n,
+    mappers=None,
+    weights=None,
+    pre_selects=None,
+    opt_outs=None,
+    quantile=0.01,
+    n_trials=15,
+    seed=None,
+    alpha=0.5,
+):
+    """Entrofy your panel.
 
     Parameters
     ----------
@@ -137,22 +151,27 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
     score : float
         The score of the solution found.  Larger is better.
 
-    '''
+    """
 
     rng = check_random_state(seed)
 
-
     # Validate n_trials
     if n_trials <= 0 or n_trials != int(n_trials):
-        raise ValueError('n_trials={} must be a positive integer'.format(n_trials))
+        raise ValueError(
+            "n_trials={} must be a positive integer".format(n_trials)
+        )
 
     # Validate quantiles
     if not 0 <= quantile <= 1.0 or not isinstance(quantile, float):
-        raise ValueError('quantile={:.2f} must be in the range [0, 1]'.format(quantile))
+        raise ValueError(
+            "quantile={:.2f} must be in the range [0, 1]".format(quantile)
+        )
 
     # Validate alpha
     if not 0 < alpha <= 1.0 or not isinstance(alpha, float):
-        raise ValueError('alpha={:.2f} must be in the range (0, 1]'.format(alpha))
+        raise ValueError(
+            "alpha={:.2f} must be in the range (0, 1]".format(alpha)
+        )
 
     # Drop the opt-outs
     if opt_outs is not None:
@@ -179,7 +198,12 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
         new_df = mapper.transform(dataframe[key])
         df_binary = df_binary.join(new_df)
         all_weights.update({k: weights[key] for k in new_df.columns})
-        all_probabilities.update({'{}{}'.format(mapper.prefix, k):mapper.targets[k] for k in mapper.targets})
+        all_probabilities.update(
+            {
+                "{}{}".format(mapper.prefix, k): mapper.targets[k]
+                for k in mapper.targets
+            }
+        )
 
     # Construct the target probability vector and weight vector
     target_prob = np.empty(len(df_binary.columns))
@@ -195,13 +219,19 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
         pre_selects_i = [df_binary.index.get_loc(_) for _ in pre_selects]
 
     # Run the specified number of randomized trials
-    results = [__entrofy(df_binary.values.astype(float), n, rng,
-                         w=target_weight,
-                         q=target_prob,
-                         pre_selects=pre_selects_i,
-                         quantile=quantile,
-                         alpha=alpha)
-               for _ in range(n_trials)]
+    results = [
+        __entrofy(
+            df_binary.values.astype(float),
+            n,
+            rng,
+            w=target_weight,
+            q=target_prob,
+            pre_selects=pre_selects_i,
+            quantile=quantile,
+            alpha=alpha,
+        )
+        for _ in range(n_trials)
+    ]
 
     # Select the trial with the best score
     max_score, best = results[0]
@@ -213,8 +243,10 @@ def entrofy(dataframe, n, mappers=None, weights=None, pre_selects=None,
     return dataframe.index[best], max_score
 
 
-def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5):
-    '''See entrofy() for documentation'''
+def __entrofy(
+    X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=0.5
+):
+    """See entrofy() for documentation"""
 
     n_participants, n_attributes = X.shape
     X = np.array(X, dtype=np.float)
@@ -270,29 +302,44 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
         p_new[Xn] = (Xn * p)[Xn]
 
         # Compute marginal gain for each candidate
-        delta = __objective(p_new, w, q, alpha=alpha) - __objective(p, w, q, alpha=alpha)
+        delta = __objective(p_new, w, q, alpha=alpha) - __objective(
+            p, w, q, alpha=alpha
+        )
 
         # Knock out the points we've already taken
         delta[y] = -np.inf
 
         # Select the top score.  Break near-ties randomly.
         delta_real = delta[np.isfinite(delta)]
-        target_score = np.percentile(delta_real, 100 * (1.0-quantile))
+        target_score = np.percentile(delta_real, 100 * (1.0 - quantile))
 
         new_idx = rng.choice(np.flatnonzero(delta >= target_score))
         y[new_idx] = True
 
-    return __objective(np.nansum(X[y], axis=0), w, q, alpha=alpha), np.flatnonzero(y)
+    return (
+        __objective(np.nansum(X[y], axis=0), w, q, alpha=alpha),
+        np.flatnonzero(y),
+    )
 
 
 def __objective(p, w, q, alpha=0.5):
-    '''Compute the objective value of a solution.'''
-    return ((np.minimum(q, p))**(alpha)).dot(w)
+    """Compute the objective value of a solution."""
+    return ((np.minimum(q, p)) ** (alpha)).dot(w)
 
 
-def save(idx, filename, dataframe=None, mappers=None, weights=None,
-         pre_selects=None, opt_outs=None, quantile=1e-2, n_trials=15,
-         seed=None, alpha=0.5):
+def save(
+    idx,
+    filename,
+    dataframe=None,
+    mappers=None,
+    weights=None,
+    pre_selects=None,
+    opt_outs=None,
+    quantile=1e-2,
+    n_trials=15,
+    seed=None,
+    alpha=0.5,
+):
     """
     Save an Entrofy run to disk.
     The data will be saved in a pickle file containing a dictionary with
@@ -357,12 +404,19 @@ def save(idx, filename, dataframe=None, mappers=None, weights=None,
         else:
             raise TypeError("Type of mapper not recognized!")
 
-
-    state = {"index": idx, "targets": targets, "data_types":data_types,
-             "boundaries": boundaries, "weights": weights,
-             "pre_selects": pre_selects, "opt_outs": opt_outs,
-             "quantile":quantile, "n_trials":n_trials, "seed": seed,
-             "alpha": alpha}
+    state = {
+        "index": idx,
+        "targets": targets,
+        "data_types": data_types,
+        "boundaries": boundaries,
+        "weights": weights,
+        "pre_selects": pre_selects,
+        "opt_outs": opt_outs,
+        "quantile": quantile,
+        "n_trials": n_trials,
+        "seed": seed,
+        "alpha": alpha,
+    }
 
     if dataframe is not None:
         state["dataframe"] = dataframe
@@ -409,15 +463,18 @@ def load(filename, dataframe=None):
         n_out = len(list(targets[key].keys()))
         if data_types[key] == "continuous":
             column_names = list(targets[key].keys())
-            mappers[key] = ContinuousMapper(dataframe[key], n_out=n_out,
-                                            boundaries=boundaries[key],
-                                            targets=targets[key],
-                                            column_names=column_names)
+            mappers[key] = ContinuousMapper(
+                dataframe[key],
+                n_out=n_out,
+                boundaries=boundaries[key],
+                targets=targets[key],
+                column_names=column_names,
+            )
 
         elif data_types[key] == "categorical":
-            mappers[key] = ObjectMapper(dataframe[key], n_out=n_out,
-                                        targets=targets[key])
-
+            mappers[key] = ObjectMapper(
+                dataframe[key], n_out=n_out, targets=targets[key]
+            )
 
     state["mappers"] = mappers
 

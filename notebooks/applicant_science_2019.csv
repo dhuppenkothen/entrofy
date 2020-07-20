@@ -1,0 +1,81 @@
+,alpine_forest,datasci_model_software,extreme_event_disaster,fish_aquatic,geo_sediment,lake_wetlands,met_climate,quality_waste,riv_streams,snow_ice,urban,country
+0,0,0,0,0,0,0,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,Snow & Ice,0,USA
+1,0,Data Science & Modeling Software,0,0,0,Lakes & Wetlands,0,0,Rivers & Streams,0,0,USA
+2,0,0,0,0,Geomorphology & Sediment,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,	Urban Environment,USA
+3,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,0,USA
+4,0,0,0,0,0,Lakes & Wetlands,	Meteorology & Climate,0,0,0,	Urban Environment,USA
+5,0,0,0,Fish & Aquatic Species,0,0,0,Water Quality & Waste,Rivers & Streams,0,	Urban Environment,USA
+6,0,Data Science & Modeling Software,0,0,0,0,0,0,Rivers & Streams,0,0,USA
+7,Alpine & Forested Environments,0,0,0,0,Lakes & Wetlands,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,Snow & Ice,0,USA
+8,0,0,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,0,0,Ethiopia
+9,Alpine & Forested Environments,0,Extreme Events & Disaster,0,0,Lakes & Wetlands,0,0,0,0,	Urban Environment,Thailand
+10,0,0,0,Fish & Aquatic Species,0,0,0,0,0,0,0,USA
+11,0,0,0,0,0,0,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,0,	Urban Environment,Nigeria
+12,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,0,0,CHINA
+13,0,Data Science & Modeling Software,0,0,0,0,	Meteorology & Climate,0,0,Snow & Ice,0,Canada
+14,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,0,0,	Urban Environment,Nepal
+15,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,0,	Urban Environment,USA
+16,0,0,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,0,	Urban Environment,USA
+17,0,0,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,0,0,Uganda
+18,0,0,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,0,0,Uganda
+19,0,0,0,0,0,0,	Meteorology & Climate,0,0,0,0,Uganda
+20,Alpine & Forested Environments,0,Extreme Events & Disaster,0,0,0,0,0,0,0,0,Czech Republic
+21,0,0,0,0,0,Lakes & Wetlands,0,Water Quality & Waste,Rivers & Streams,0,0,UK
+22,0,Data Science & Modeling Software,Extreme Events & Disaster,0,Geomorphology & Sediment,0,0,0,Rivers & Streams,0,0,USA
+23,0,0,0,0,0,0,	Meteorology & Climate,0,0,Snow & Ice,0,USA
+24,0,0,0,0,Geomorphology & Sediment,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+25,0,Data Science & Modeling Software,0,0,Geomorphology & Sediment,Lakes & Wetlands,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,0,0,USA
+26,0,Data Science & Modeling Software,0,0,0,0,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,Snow & Ice,0,INDIA
+27,0,Data Science & Modeling Software,Extreme Events & Disaster,0,Geomorphology & Sediment,Lakes & Wetlands,0,Water Quality & Waste,Rivers & Streams,0,0,USA
+28,0,0,0,0,Geomorphology & Sediment,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+29,0,0,0,0,0,0,0,Water Quality & Waste,0,0,0,USA
+30,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,0,	Urban Environment,Spain
+31,0,0,Extreme Events & Disaster,Fish & Aquatic Species,0,Lakes & Wetlands,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,Snow & Ice,0,USA
+32,0,Data Science & Modeling Software,0,0,0,Lakes & Wetlands,0,Water Quality & Waste,0,0,0,USA
+33,0,Data Science & Modeling Software,0,0,0,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,Canada
+34,0,Data Science & Modeling Software,Extreme Events & Disaster,Fish & Aquatic Species,0,0,0,0,Rivers & Streams,0,0,USA
+35,0,Data Science & Modeling Software,Extreme Events & Disaster,0,Geomorphology & Sediment,0,	Meteorology & Climate,0,Rivers & Streams,0,0,USA
+36,0,0,0,0,0,0,0,Water Quality & Waste,0,0,	Urban Environment,USA
+37,Alpine & Forested Environments,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,Austria
+38,Alpine & Forested Environments,Data Science & Modeling Software,Extreme Events & Disaster,0,0,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+39,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,Lakes & Wetlands,0,0,0,0,0,USA
+40,0,0,0,0,0,0,	Meteorology & Climate,0,Rivers & Streams,0,0,USA
+41,0,0,0,0,0,0,0,0,0,Snow & Ice,0,USA
+42,0,Data Science & Modeling Software,Extreme Events & Disaster,0,Geomorphology & Sediment,0,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,Snow & Ice,0,USA
+43,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,	Urban Environment,USA
+44,0,0,0,0,0,0,0,Water Quality & Waste,0,0,0,USA
+45,0,0,0,Fish & Aquatic Species,0,0,0,0,Rivers & Streams,0,0,USA
+46,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,0,USA
+47,0,0,0,0,0,Lakes & Wetlands,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,0,0,USA
+48,0,0,0,0,Geomorphology & Sediment,0,0,0,Rivers & Streams,0,0,USA
+49,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,0,USA
+50,0,0,0,0,0,0,0,0,0,0,0,USA
+51,Alpine & Forested Environments,0,0,Fish & Aquatic Species,Geomorphology & Sediment,0,0,Water Quality & Waste,Rivers & Streams,0,0,USA
+52,0,Data Science & Modeling Software,0,Fish & Aquatic Species,0,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,0,	Urban Environment,USA
+53,Alpine & Forested Environments,Data Science & Modeling Software,0,0,0,Lakes & Wetlands,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+54,0,0,0,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+55,Alpine & Forested Environments,Data Science & Modeling Software,0,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+56,Alpine & Forested Environments,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+57,0,0,0,0,Geomorphology & Sediment,0,0,0,Rivers & Streams,0,0,USA
+58,Alpine & Forested Environments,Data Science & Modeling Software,0,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+59,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+60,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,0,USA
+61,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,0,USA
+62,0,Data Science & Modeling Software,0,Fish & Aquatic Species,0,0,0,0,Rivers & Streams,0,0,USA
+63,0,0,0,Fish & Aquatic Species,0,0,0,0,0,0,0,USA
+64,0,0,0,0,0,0,0,0,0,Snow & Ice,0,USA
+65,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,Lakes & Wetlands,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,Snow & Ice,	Urban Environment,USA
+66,Alpine & Forested Environments,Data Science & Modeling Software,0,Fish & Aquatic Species,Geomorphology & Sediment,Lakes & Wetlands,	Meteorology & Climate,Water Quality & Waste,Rivers & Streams,0,0,USA
+67,0,Data Science & Modeling Software,0,0,0,0,0,0,0,0,0,USA
+68,Alpine & Forested Environments,0,0,0,0,0,	Meteorology & Climate,0,0,Snow & Ice,0,USA
+69,Alpine & Forested Environments,0,0,Fish & Aquatic Species,Geomorphology & Sediment,0,	Meteorology & Climate,0,Rivers & Streams,0,0,USA
+70,0,Data Science & Modeling Software,0,0,0,Lakes & Wetlands,0,Water Quality & Waste,Rivers & Streams,0,0,USA
+71,0,Data Science & Modeling Software,0,Fish & Aquatic Species,0,0,0,0,Rivers & Streams,0,0,USA
+72,0,Data Science & Modeling Software,0,0,Geomorphology & Sediment,Lakes & Wetlands,0,0,Rivers & Streams,Snow & Ice,	Urban Environment,USA
+73,0,0,0,0,0,Lakes & Wetlands,0,0,0,0,0,USA
+74,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,0,Water Quality & Waste,0,0,0,USA
+75,0,0,0,0,Geomorphology & Sediment,Lakes & Wetlands,0,Water Quality & Waste,Rivers & Streams,Snow & Ice,0,USA
+76,Alpine & Forested Environments,0,0,0,0,0,	Meteorology & Climate,0,Rivers & Streams,Snow & Ice,0,USA
+77,0,Data Science & Modeling Software,0,0,0,0,0,0,Rivers & Streams,0,	Urban Environment,USA
+78,Alpine & Forested Environments,Data Science & Modeling Software,0,0,0,Lakes & Wetlands,0,0,Rivers & Streams,0,0,Nepal
+79,0,Data Science & Modeling Software,Extreme Events & Disaster,0,0,0,	Meteorology & Climate,0,0,0,0,China

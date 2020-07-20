@@ -1,4 +1,5 @@
 # entrofy
+
 Participant selection for workshops and conferences made easy.
 
 Selection of participants for meetings as a discrete optimization problem.
@@ -31,17 +32,28 @@ Note that this is explicitly not the same as a quota: the underlying algorithim 
 - Subset of candidates which approximate the target distributions
 - Distribution of each value in subset
 
-## Install Instructions
+## App Installation Instructions
 
 **Note**: The app is under active development and requires updates before running reliably. As of now, it's not really usable. Use the Python library instead (see below).
 
 Download the app/ directory
 
-```
+```bash
 pip install -r requirements.txt
 python server.py
 ```
+
 then go to http://localhost:5000/ in your web browser
+
+## Python Library Installation Instructions
+
+As noted above, at present, `entrofy` is best used as a Python package. Navigate to the top-level `entrofy` directory, then install it in your local environment.
+
+```bash
+python setup.py install
+```
+
+This should also install all necessary dependencies for the Python package.
 
 ## Usage Instructions
 
