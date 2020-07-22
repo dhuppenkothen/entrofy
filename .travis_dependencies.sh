@@ -11,7 +11,7 @@ conda_create ()
     conda update -q conda
     conda config --add channels pypi
     conda info -a
-    deps='six nose coverage pip numpy scipy pandas matplotlib'
+    deps='six nose coverage pip numpy scipy pandas matplotlib future'
 
     conda create -q -n $ENV_NAME "python=$TRAVIS_PYTHON_VERSION" $deps
 }
@@ -20,7 +20,7 @@ src="$HOME/env/miniconda$TRAVIS_PYTHON_VERSION"
 if [ ! -d "$src" ]; then
     mkdir -p $HOME/env
     pushd $HOME/env
-    
+
         # Download miniconda packages
         wget http://repo.continuum.io/miniconda/Miniconda-3.16.0-Linux-x86_64.sh -O miniconda.sh;
 
@@ -28,12 +28,12 @@ if [ ! -d "$src" ]; then
         bash miniconda.sh -b -p $src
 
         export PATH="$src/bin:$PATH"
-        conda_create 
+        conda_create
 
         source activate $ENV_NAME
 
         pip install python-coveralls
-            
+
         source deactivate
     popd
 else

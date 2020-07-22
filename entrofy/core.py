@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 '''Entrofy core optimization routines'''
 
+from builtins import range
 import warnings
 from six.moves import cPickle as pickle
 

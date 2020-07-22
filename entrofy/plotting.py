@@ -1,4 +1,6 @@
 from __future__ import division
+from builtins import zip
+from builtins import range
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -230,7 +232,7 @@ def _plot_categorical(df, xlabel, ylabel, x_keys, y_keys, prefac, ax, cmap, s):
             counts.append(len(df[(df[xlabel] == x_keys[i]) &
                                  (df[ylabel] == y_keys[j])]))
 
-    x, y = zip(*tuples)
+    x, y = list(zip(*tuples))
 
     cmap = plt.cm.get_cmap(cmap)
     sizes = (np.array(counts)/np.sum(counts))

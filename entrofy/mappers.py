@@ -2,6 +2,9 @@
 # -*- encoding: utf-8 -*-
 '''Column mapper object definitions'''
 
+from builtins import zip
+from builtins import range
+from builtins import object
 import numpy as np
 import pandas as pd
 import six 
