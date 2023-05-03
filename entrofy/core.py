@@ -39,7 +39,7 @@ def _check_probabilities(mapper):
         raise RuntimeError('{} total target probability {} > 1'.format(mapper, score))
 
 
-def construct_mappers(dataframe, weights, datatypes=None):
+def construct_mappers(dataframe, weights, datatypes=None, prefixes=None):
     '''Construct mappers from a dataframe
 
     Parameters
@@ -54,6 +54,11 @@ def construct_mappers(dataframe, weights, datatypes=None):
     datatypes : dict
         `datatypes[key]` indicates whether `dataframe[key]` should be
         interpreted as "categorical" or "continuous"
+
+    prefixes : dict
+        `prefixes[key]` indicates whether there should be a prefix set for
+        that category. Use empty strings `""` for categories without a
+        prefix.
 
     Returns
     -------
@@ -82,6 +87,9 @@ def construct_mappers(dataframe, weights, datatypes=None):
                 mappers[key] = ContinuousMapper(dataframe[key])
             else:
                 mappers[key] = ObjectMapper(dataframe[key])
+
+        if prefixes is not None:
+            mappers[key].prefix = prefixes[key]
 
     return mappers
 
