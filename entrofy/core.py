@@ -218,7 +218,7 @@ def __entrofy(X, k, rng, w=None, q=None, pre_selects=None, quantile=0.01, alpha=
     '''See entrofy() for documentation'''
 
     n_participants, n_attributes = X.shape
-    X = np.array(X, dtype=np.float)
+    X = np.array(X, dtype=float)
 
     if w is None:
         w = np.ones(n_attributes)

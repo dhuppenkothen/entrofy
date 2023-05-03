@@ -7,7 +7,7 @@ from builtins import range
 from builtins import object
 import numpy as np
 import pandas as pd
-import six 
+import six
 
 __all__ = ['ObjectMapper', 'BaseMapper', 'ContinuousMapper']
 
@@ -82,8 +82,8 @@ class BaseMapper(object):
         '''
         new_columns =  sorted(['{}{}'.format(self.prefix, key) for key in self.targets])
         df = pd.DataFrame(index=column.index,
-                          columns = new_columns,
-                          dtype=np.float)
+                          columns=new_columns,
+                          dtype=float)
 
         nonnulls = ~column.isnull()
 

@@ -157,8 +157,8 @@ def plot(df, idx, weights, mappers=None, cols=4):
 
     axes = []
 
-    for i,c in enumerate(columns):
-        ax = fig.add_subplot(rows, cols, i+1)
+    for i, c in enumerate(columns):
+        ax = fig.add_subplot(int(rows), int(cols), i+1)
         ax, _ = plot_fractions(df[c], idx, c, mappers[c], ax=ax)
         axes.append(ax)
 
